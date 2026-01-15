@@ -1,5 +1,6 @@
 #pragma once
 #include "Mechanism/Pawn.h"
+#include <functional>
 
 class Spaceship : public Mechanism::Pawn
 {
@@ -13,10 +14,16 @@ public:
 
 	void Shoot();
 
+	void SetShootCallback(const std::function<void(float, float)>& callback)
+	{
+		m_ShootCallback = callback;
+	}
+
 private:
 
-	float boundaryX = 1280;
-	float boundaryY = 720;
+	float m_ShootCooldown; 
+	float m_ShootCooldownTime;
+	std::function<void(float, float)> m_ShootCallback;
 
 };
 

@@ -3,7 +3,7 @@
 #include <iostream>
 
 Spaceship::Spaceship(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex) :
-	Pawn(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex)
+	Pawn(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), m_ShootCooldown(0.0f), m_ShootCooldownTime(0.2f)
 {
 	SetSpeed(5.0f); // Set a default speed for the spaceship
 	std::cout << "Spaceship created\n";
@@ -20,6 +20,12 @@ void Spaceship::PlayerUpdate(float deltaTime)
 	{
 		std::cerr << "Error: Cannot update spaceship without a physics body.\n";
 		return;
+	}
+
+	//Update cooldown timer
+	if(m_ShootCooldown > 0.0f)
+	{
+		m_ShootCooldown -= deltaTime;
 	}
 
 	float directionX = 0.0f;
@@ -57,14 +63,21 @@ void Spaceship::PlayerUpdate(float deltaTime)
 	if(Mechanism::Input::IsKeyPressed(Mechanism::Input::KEY_SPACE))
 	{
 		Shoot();
+		m_ShootCooldown = m_ShootCooldownTime;
 	}
 
 }
 
 void Spaceship::Shoot()
 {
-	//To do: implement shooting logic
-	std::cout << "Pew! Pew! Shooting!\n";
+	if(m_ShootCallback)
+	{
+		float bulletX = GetX() + (GetFrameWidth() / 2.0f) - 8.0f; // Center bullet horizontally
+		float bulletY = GetY() - 30.0f; // Position bullet above the spaceship
+
+		m_ShootCallback(bulletX, bulletY);
+		std::cout << "Spaceship shot a projectile from (" << bulletX << ", " << bulletY << ")\n";
+	}
 }
 
 

@@ -1,14 +1,30 @@
 #include "Projectile.h"
-//#include <box2d/box2d.h>
+#include <iostream>
 
 
-void Projectile::BulletUpdate(float deltaTime)
+Projectile::Projectile(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex)
+	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityY(-400.0f)
 {
-	// Configure a body as a bullet for CCD with all body types
-	/*b2BodyDef bodyDef = b2DefaultBodyDef();
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.isBullet = true;  // Enable bullet behavior
-	bodyDef.position = b2Vec2{ 0.0f, 5.0f };
-
-	b2BodyId bulletId = b2CreateBody(worldId, &bodyDef);*/
+		std::cout << "Projectile created\n";
 }
+
+Projectile::~Projectile()
+{
+		std::cout << "Projectile destroyed\n";
+}
+
+void Projectile::UpdateProjectile(float deltaTime)
+{
+	if(HasPhysicsBody())
+	{
+		// Move the projectile upwards at a constant speed
+		std::cout << "Updating projectile velocityY: " << velocityY << std::endl;
+		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f);// Divided by 100 to convert to Box2D units meters/second
+	}
+}
+
+bool Projectile::IsOffScreen(float screenHeight) const
+{
+	return GetY() < -50.0f || GetY() > screenHeight + 50.0f;
+}
+
