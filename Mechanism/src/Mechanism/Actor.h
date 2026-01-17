@@ -6,9 +6,20 @@
 
 namespace Mechanism
 {
+  
     class MECHANISM_API Actor
     {
+
     public:
+
+        enum class CollisionTag
+        {
+            None = 0,
+            Player,
+            Enemy,
+            Projectile,
+            Background
+        };
 
         Actor(void* renderer, const char* texturePath, float x, float y,
             int gridColumns, int gridRows, int frameIndex = 0);
@@ -21,11 +32,7 @@ namespace Mechanism
 		void ScaleActor(float scaleX, float scaleY);
 
         void SetFrameIndex(int index);
-        void SetAnimationSpeed(float fps) 
-        {
-            m_FrameDuration = 1.0f / fps;
-        }
-
+        void SetAnimationSpeed(float fps){ m_FrameDuration = 1.0f / fps; }
 
         float GetX() const { return m_X; }
         float GetY() const { return m_Y; }
@@ -40,20 +47,24 @@ namespace Mechanism
 		void CreatePhysicsBody(void* worldId, bool isDynamic = true, bool isBullet = false);
         void SyncPhysicsToVisual();
 
-		Box2DBody& GetPhysicsBody() 
-        { 
-            return m_Box2DBody; 
-        }
+		Box2DBody& GetPhysicsBody(){ return m_Box2DBody; }
 
-        bool HasPhysicsBody() const 
-        { 
-            return m_Box2DBody.IsValid(); 
-		}
+        bool HasPhysicsBody() const { return m_Box2DBody.IsValid(); }
+
+        void SetCollisionTag(CollisionTag tag){ m_CollisionTag = tag; }
+        CollisionTag GetCollisionTag() const { return m_CollisionTag; }
+
+		virtual void OnCollisionBegin(Actor* other) {}
+
+        void SetIsDead(bool dead) { isDead = dead; }
+        bool IsDead() const { return isDead; }
 
     private:
 
 		//Texture
 		std::unique_ptr<Texture> m_Texture;
+
+        bool isDead = false;
 
 		// Position
         float m_X;
@@ -79,6 +90,6 @@ namespace Mechanism
         int m_TotalFrames;   
 
 		Box2DBody m_Box2DBody;
-      
+		CollisionTag m_CollisionTag = CollisionTag::None;
     };
 }

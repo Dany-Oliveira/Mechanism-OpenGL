@@ -18,7 +18,6 @@ void Projectile::UpdateProjectile(float deltaTime)
 	if(HasPhysicsBody())
 	{
 		// Move the projectile upwards at a constant speed
-		std::cout << "Updating projectile velocityY: " << velocityY << std::endl;
 		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f);// Divided by 100 to convert to Box2D units meters/second
 	}
 }
@@ -26,5 +25,14 @@ void Projectile::UpdateProjectile(float deltaTime)
 bool Projectile::IsOffScreen(float screenHeight) const
 {
 	return GetY() < -50.0f || GetY() > screenHeight + 50.0f;
+}
+
+void Projectile::OnCollisionBegin(Mechanism::Actor* other)
+{
+	if(other && other->GetCollisionTag()==Mechanism::Actor::CollisionTag::Enemy)
+	{
+		printf("Projectile collided with an enemy!\n");
+		SetIsDead(true);
+	}
 }
 

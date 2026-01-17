@@ -6,6 +6,7 @@
 #include "Mechanism/Renderer.h"
 #include "Spaceship.h"  
 #include "Projectile.h"
+#include "Enemy.h"
 #include <memory>  
 #include <optional>
 
@@ -21,8 +22,8 @@
         void Render() override;
         void UpdateGameLevel(float deltaTime);
 
-		void SpawnLoner(float x, float y);
-		void SpawnRusher(float x, float y);
+		void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows);
+
 		void SpawnPlayer(float x, float y);
 		void SpawnProjectile(float x, float y);
 
@@ -32,18 +33,18 @@
 
     private:
 
+        void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
+
+        Mechanism::Renderer* m_Renderer;
+        Mechanism::Actor* m_Background;
+        Spaceship* m_Player;
+
 		int m_WindowWidth;
 		int m_WindowHeight;
 
         std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
-        std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level
-
-        Mechanism::Renderer* m_Renderer;
-        Mechanism::Actor* m_Background;
-        Mechanism::Actor* m_Loner;
-        Mechanism::Actor* m_Rusher;
-        Spaceship* m_Player;
-
-		
+        std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
+		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
+        
     };
 

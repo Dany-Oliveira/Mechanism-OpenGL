@@ -24,13 +24,10 @@ namespace Mechanism
 		void SetSpeed(float sp) { speed = sp; }
 		float GetSpeed() const { return speed; }
 
-		bool IsDead() const { return isDead; }
-		void SetIsDead(bool dead) { isDead = dead; }
 
 	protected:
 
 			float speed;
-			bool isDead = false;
 
 	};
 }

@@ -21,7 +21,11 @@ namespace Mechanism
 		{
 			if(m_Box2DWorld)
 			{
+				//Physic simulation runs 
 				m_Box2DWorld->Step(m_TimeStep, m_SubStepCount);
+
+				//Check for collision events and handle them
+				m_Box2DWorld->ProcessContactEvents();
 			}
 			m_Accumulator -= m_TimeStep;
 		}

@@ -1,5 +1,4 @@
 #include "Actor.h"
-#include "Texture.h"
 #include <SDL3/SDL.h>
 #include <iostream>
 
@@ -47,7 +46,7 @@ namespace Mechanism
 
     Actor::~Actor()
 	{
-		std::cout << "Actor destroyed\n";
+		
     }
 
 
@@ -148,12 +147,12 @@ namespace Mechanism
 		// Add box shape
 		m_Box2DBody.AddBoxShape(halfWidth, halfHeight, 1.0f, 0.0f);
 
-
+		// store pointer to this Actor in the Box2DBody user data
+		m_Box2DBody.SetUserData(this);
     }
 
     void Actor::SyncPhysicsToVisual()
     {
-
         if (m_Box2DBody.IsValid())
         {   
 			float physicsx, physicsy;

@@ -7,12 +7,12 @@ namespace Mechanism
 	Pawn::Pawn(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex)
 		: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex)
 	{
-		std::cout << "Pawn created\n";
+		
 	}
 
 	Pawn::~Pawn()
 	{
-		std::cout << "Pawn destroyed\n";
+		
 	}
 
 	void Pawn::MoveInDirection(float directionX, float directionY, float speed)

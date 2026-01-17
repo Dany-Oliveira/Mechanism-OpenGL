@@ -112,6 +112,7 @@ namespace Mechanism
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
 		shapeDef.density = density;
 		shapeDef.material.friction = friction;
+		shapeDef.enableContactEvents = true;
 
 		// Create box shape
 		b2Polygon box = b2MakeBox(halfWidth, halfHeight);
@@ -143,6 +144,25 @@ namespace Mechanism
 			x = 0.0f;
 			y = 0.0f;
 		}
+	}
+
+	void Box2DBody::SetUserData(void* data)
+	{
+		if(IsValid())
+		{
+			b2BodyId* bodyId = static_cast<b2BodyId*>(bodyId_);
+			b2Body_SetUserData(*bodyId, data);
+		}
+	}
+
+	void* Box2DBody::GetUserData() const
+	{
+		if(IsValid())
+		{
+			b2BodyId* bodyId = static_cast<b2BodyId*>(bodyId_);
+			return b2Body_GetUserData(*bodyId);
+		}
+		return nullptr;
 	}
 
 	bool Box2DBody::IsValid() const

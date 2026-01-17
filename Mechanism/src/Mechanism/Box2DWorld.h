@@ -1,10 +1,11 @@
 #pragma once
 #include "Core.h"
 #include <memory>
-
+#include <functional>
 
 namespace Mechanism
 {
+	class Actor;
 
 	class MECHANISM_API Box2DWorld
 	{
@@ -25,10 +26,18 @@ namespace Mechanism
 
 			void* GetWorldId() const;
 
+			void SetCollisionBeginCallback(std::function<void(Actor*, Actor*)> callback)
+			{
+				m_CollisionBeginCallback = callback;
+			}
+
+			void ProcessContactEvents();
+
 		private:
 
 			void* worldId_;
 
+			std::function<void(Actor*, Actor*)> m_CollisionBeginCallback;
 	};
 
 }

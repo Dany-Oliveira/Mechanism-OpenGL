@@ -31,6 +31,9 @@ namespace Mechanism
 		void SetLinearVelocity(float vx, float vy);
 		void GetPosition(float& x, float& y) const;
 
+		void SetUserData(void* data);
+		void* GetUserData() const;
+
 		//Accessor
 		bool IsValid() const;
 

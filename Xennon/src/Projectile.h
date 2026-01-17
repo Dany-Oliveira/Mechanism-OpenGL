@@ -13,6 +13,7 @@ public:
 
 	bool IsOffScreen(float screenHeight) const;
 
+	void OnCollisionBegin(Mechanism::Actor* other) override;
 
 private:
 

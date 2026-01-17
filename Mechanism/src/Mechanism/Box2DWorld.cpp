@@ -1,4 +1,5 @@
 #include "Box2DWorld.h"
+#include "Actor.h"
 #include <box2d/box2d.h>
 #include <iostream>
 
@@ -38,7 +39,8 @@ namespace Mechanism
 	}
 
 	// Move constructor
-	Box2DWorld::Box2DWorld(Box2DWorld&& other) noexcept : worldId_(other.worldId_)
+	Box2DWorld::Box2DWorld(Box2DWorld&& other) noexcept : worldId_(other.worldId_), 
+		m_CollisionBeginCallback(std::move(other.m_CollisionBeginCallback))
 	{
 		other.worldId_ = nullptr;
 	}
@@ -58,6 +60,7 @@ namespace Mechanism
 				delete worldId;
 			}
 			worldId_ = other.worldId_;
+			m_CollisionBeginCallback = std::move(other.m_CollisionBeginCallback);
 			other.worldId_ = nullptr;
 		}
 		return *this;
@@ -81,5 +84,48 @@ namespace Mechanism
 	{
 		return worldId_;
 	}
+
+	void Box2DWorld::ProcessContactEvents()
+	{
+		// Ensure we have a valid world and callback
+		if(!worldId_ || !m_CollisionBeginCallback)
+		{
+			return;
+		}
+
+		b2WorldId* worldId = static_cast<b2WorldId*>(worldId_);
+		if(!b2World_IsValid(*worldId))
+		{
+			return;
+		}
+
+		//Ask Box2D for contact events in the last time step
+		b2ContactEvents contactEvents = b2World_GetContactEvents(*worldId);
+
+		// Process begin touch events
+		for(int i = 0; i < contactEvents.beginCount; ++i)
+		{
+			const b2ContactBeginTouchEvent& beginEvent = contactEvents.beginEvents[i];
+
+			//Get the two bodies that collided	
+			b2BodyId bodyIdA = b2Shape_GetBody(beginEvent.shapeIdA);
+			b2BodyId bodyIdB = b2Shape_GetBody(beginEvent.shapeIdB);
+
+			//Get the Actor pointers from the user data
+			void* userDataA = b2Body_GetUserData(bodyIdA);
+			void* userDataB = b2Body_GetUserData(bodyIdB);
+
+			//Convert to Actor pointers
+			Actor* actorA = static_cast<Actor*>(userDataA);
+			Actor* actorB = static_cast<Actor*>(userDataB);
+
+			//Only call the callback if both actors are valid
+			if(actorA && actorB)
+			{
+				m_CollisionBeginCallback(actorA, actorB);
+			}
+		}
+	}
+
 
 }

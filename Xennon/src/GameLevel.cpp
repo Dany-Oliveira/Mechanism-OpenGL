@@ -1,16 +1,24 @@
 #include "GameLevel.h"
 #include <iostream>
+#include <algorithm>
 
 
     GameLevel::GameLevel(Mechanism::Window& window): Level(0.0f, 0.0f), 
-        m_Renderer(&window.GetRenderer()), m_Background(nullptr), m_Loner(nullptr), m_Rusher(nullptr), m_Player(nullptr),
-        m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight())
+        m_Renderer(&window.GetRenderer()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
+		m_Background(nullptr), m_Player(nullptr)
     {
         printf("\nGameLevel created!\n");
 
+        GetBox2DWorld().SetCollisionBeginCallback(
+            [this](Mechanism::Actor* actorA, Mechanism::Actor* actorB)
+            {
+                OnCollisionBegin(actorA, actorB);
+			});
+
 		AddBackground();
-		SpawnLoner(100.0f, 100.0f);
-		SpawnRusher(300.0f, 300.0f);
+
+		SpawnEnemy("assets/LonerA.bmp", 300.0f, 100.0f, 4, 4);
+		SpawnEnemy("assets/rusher.bmp", 500.0f, 300.0f, 6, 4);
 
 		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
 
@@ -41,40 +49,28 @@
         printf("Background added\n\n");        
     }
 
-    void GameLevel::SpawnLoner(float xPos, float yPos)
+
+    void GameLevel::SpawnEnemy(const char* texturePath, float xPos, float yPos, int cols, int rows)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
-        auto loner = std::make_unique<Mechanism::Actor>(m_Renderer->GetNativeRenderer(), "assets/LonerA.bmp", xPos, yPos, 4, 4, 0);
+        auto enemy = std::make_unique<Enemy>(m_Renderer->GetNativeRenderer(), texturePath, xPos, yPos, cols, rows, 0);
 
-		// Create physics body
-		loner->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false);
+		enemy->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for enemy
+		enemy->SetCollisionTag(Mechanism::Actor::CollisionTag::Enemy); //Set collision tag to indentify as enemy
 
-        m_Loner = loner.get();
-        m_Actors.push_back(std::move(loner));
+		m_Enemies.push_back(std::move(enemy));
 
-        printf("\Loner spawned at (%.0f, %.0f)\n\n", xPos, yPos);
+		printf("Enemy spawned at (%.0f, %.0f)\n\n", xPos, yPos);
     }
 
-    void GameLevel::SpawnRusher(float xPos, float yPos)
-    {
-        // x   y  col row 0=its the srite in the col0 row0, the first sprite
-        auto rusher = std::make_unique<Mechanism::Actor>(m_Renderer->GetNativeRenderer(), "assets/rusher.bmp", xPos, yPos, 6, 4, 0);
-
-		rusher->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false);
-
-		m_Rusher = rusher.get();
-        m_Actors.push_back(std::move(rusher));
-
-        printf("\Rusher spawned at (%.0f, %.0f)\n\n", xPos, yPos);
-    }
 
     void GameLevel::SpawnPlayer(float xPos, float yPos)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
         auto player = std::make_unique<Spaceship>(m_Renderer->GetNativeRenderer(), "assets/Ship1.bmp", xPos, yPos, 7, 1, 3);
 
-		player->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false);
-
+		player->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for player
+		player->SetCollisionTag(Mechanism::Actor::CollisionTag::Player); //Set collision tag to indentify as player
 		player->SetSpeed(5.0f); // Set player speed
 
 		// Set up shooting callback
@@ -92,7 +88,10 @@
     void GameLevel::SpawnProjectile(float x, float y)
     {
 		auto projectile = std::make_unique<Projectile>(m_Renderer->GetNativeRenderer(), "assets/missile.bmp", x, y, 1, 1, 0);
-		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true);
+
+		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); //Create physics body for projectile
+		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); //Set collision tag to indentify as projectile
+
 		m_Projectiles.push_back(std::move(projectile));
 		printf("Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
@@ -107,6 +106,16 @@
                 actor->Render(m_Renderer->GetNativeRenderer());
             }
         }
+
+		// Render all enemies
+        for (const auto& enemy : m_Enemies)
+        {
+            if(enemy)
+            {
+				enemy->Render(m_Renderer->GetNativeRenderer());
+            }
+        }
+
 		// Render all projectiles
         for (const auto& projectile : m_Projectiles)
         {
@@ -127,7 +136,7 @@
             m_Player->PlayerUpdate(deltaTime);
 		}
 
-		// Update all actors
+        // Update all actors
         for (const auto& actor : m_Actors)
         {
             if (actor)
@@ -135,6 +144,15 @@
                 actor->UpdateActor(deltaTime);
             }
         }
+        
+		// Update all enemies
+        for (auto& enemy : m_Enemies)
+        {
+            if (enemy)
+            {
+                enemy->UpdateActor(deltaTime);
+            }
+		}
 
 		//Update all projectiles
         for(auto& projectile : m_Projectiles)
@@ -146,24 +164,47 @@
             }
         }
 
+		//Remove dead enemies
+        m_Enemies.erase(
+            std::remove_if(m_Enemies.begin(), m_Enemies.end(),
+                [](const std::unique_ptr<Enemy>& enemy)
+                {
+                    return enemy->IsDead();
+                }),
+            m_Enemies.end()
+		);
+
 		//Remove off-screen projectiles
         m_Projectiles.erase(
             std::remove_if(m_Projectiles.begin(), m_Projectiles.end(),
                 [this](const std::unique_ptr<Projectile>& proj)
                 {
-                    return proj->IsOffScreen(m_WindowHeight);
+                    return proj->IsDead() || proj->IsOffScreen(m_WindowHeight); 
                 }),
             m_Projectiles.end()
 		);
+
     }
+
+    void GameLevel::OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB)
+    {
+        if (!actorA || !actorB)
+        {
+            return;
+        }
+        // Notify both actors of the collision
+        actorA->OnCollisionBegin(actorB);
+        actorB->OnCollisionBegin(actorA);
+    }
+
 
     void GameLevel::ClearAllActors()
     {
         m_Actors.clear();
 		m_Background = nullptr;
-		m_Loner = nullptr;
-        m_Rusher = nullptr;
 		m_Player = nullptr;
     }
+
+ 
 
 
