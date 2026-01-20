@@ -36,7 +36,8 @@
         void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
 
         Mechanism::Window& m_Window;
-        Mechanism::Actor* m_LetterA;
+        std::vector<Mechanism::Actor*> m_Letters;
+        void DisplayText(const std::string& text, float startX, float startY, float scale = 5.0f, float spacing = 5.0f);
         Mechanism::Renderer* m_Renderer;
         Mechanism::Actor* m_Background;
         Spaceship* m_Player;

@@ -3,9 +3,14 @@
 #include <algorithm>
 
 
-GameLevel::GameLevel(Mechanism::Window& window) : Level(0.0f, 0.0f),
-m_Window(window), m_Renderer(&window.GetRenderer()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
-m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
+GameLevel::GameLevel(Mechanism::Window& window) :
+    Level(0.0f, 0.0f),
+    m_Window(window),
+    m_Renderer(&window.GetRenderer()),
+    m_WindowWidth(window.GetWidth()),
+    m_WindowHeight(window.GetHeight()),
+    m_Background(nullptr),
+    m_Player(nullptr)
     {
         printf("\nGameLevel created!\n");
 
@@ -27,16 +32,45 @@ m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
 
 
 
+
+
+
+
+
+
+
+
+
+        //do text stuff
+        DisplayText("HELLO WORLD", 100.0f, 50.0f, 3.0f, 5.0f);
+
+
+
+
+
+
+
+
+
+/*
         m_LetterA = new Mechanism::Actor(
             m_Renderer->GetNativeRenderer(),
             "assets/alphabet_tileset.bmp",
             m_WindowWidth / 2.0f,
             m_WindowHeight / 2.0f,
-            6,     // numero de colunas
-            10,    // numero de rows
-            0     // Tem de se calcular o numero de cada letra assim: numero da row veses numero da linha mais o numero da coluna, pro a isto fica 32
+            8,     // numero de colunas
+            12,    // numero de rows
+            32     // Tem de se calcular o numero de cada letra assim: numero da row veses numero da linha mais o numero da coluna, pro a isto fica 32
         );
      
+        //ficar maior
+        m_LetterA->ScaleActor(5.0f, 5.0f);
+
+        if (m_LetterA && m_LetterA->IsValid())
+        {
+            printf("Letter Actor created successfully!\n");
+        }
+
        // m_Actors.push_back(std::move(letterA));
 
         //debug para ver se a letra spawna
@@ -48,13 +82,57 @@ m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
         {
             printf("ERROR: Letter Actor failed to load!\n");
         }
+        printf("Spawned %zu actors\n", m_Actors.size()); */
+    } 
 
 
 
 
-        printf("Spawned %zu actors\n", m_Actors.size());
+void GameLevel::DisplayText(const std::string& text, float startX, float startY, float scale, float spacing)
+{
+    float currentX = startX;
+
+    for (char c : text)
+    {
+        int frameIndex = -1;
+
+        if (c == ' ')
+        {
+            currentX += 21 * scale + spacing;
+            continue;
+        }
+        else if (c >= 'A' && c <= 'Z')
+        {
+            frameIndex = 33 + (c - 'A');  // Uppercase A starts at frame 33
+        }
+        else if (c >= 'a' && c <= 'z')
+        {
+            frameIndex = 65 + (c - 'a');  // Lowercase a starts at frame 65
+        }
+        else if (c >= '0' && c <= '9')
+        {
+            frameIndex = 16 + (c - '0');  // Digit 0 starts at frame 16
+        }
+
+        if (frameIndex >= 0)
+        {
+            Mechanism::Actor* letter = new Mechanism::Actor(
+                m_Renderer->GetNativeRenderer(),
+                "assets/alphabet_tileset.bmp",
+                currentX,
+                startY,
+                8,
+                12,
+                frameIndex
+            );
+            letter->ScaleActor(scale, scale);
+            m_Letters.push_back(letter);
+
+            currentX += 21 * scale + spacing;
+        }
     }
-
+}
+     
 
 
 
@@ -67,14 +145,17 @@ m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
         printf("GameLevel destroyed! Cleaning up %zu actors\n", m_Actors.size());
 		m_Projectiles.clear();
         ClearAllActors();
-        delete m_LetterA;
+        for (auto* letter : m_Letters)
+        {
+            delete letter;
+        }
+        m_Letters.clear();
     }
 
 
  
     void GameLevel::AddBackground ()
     {
-        // x   y  col row 0=its the srite in the col0 row0, the first sprite
         auto background = std::make_unique<Mechanism::Actor>(m_Renderer->GetNativeRenderer(), "assets/galaxy2.bmp", 0, 0, 1, 1, 0);
 
 		m_Background = background.get();
@@ -153,34 +234,6 @@ m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
             }
         }
 
-		// Render all enemies
-        for (const auto& enemy : m_Enemies)
-        {
-            if(enemy)
-            {
-				enemy->Render(m_Renderer->GetNativeRenderer());
-            }
-        }
-
-		// Render all projectiles
-        for (const auto& projectile : m_Projectiles)
-        {
-            if(projectile)
-            {
-				projectile->Render(m_Renderer->GetNativeRenderer());
-            }
-        }
-
-
-
-        for (const auto& actor : m_Actors)
-        {
-            if (actor)
-            {
-                actor->Render(m_Renderer->GetNativeRenderer());
-            }
-        }
-
         // Render all enemies
         for (const auto& enemy : m_Enemies)
         {
@@ -199,11 +252,13 @@ m_Background(nullptr), m_Player(nullptr), m_LetterA(nullptr)
             }
         }
 
-// Render the letter
-if (m_LetterA && m_LetterA->IsValid())
-{
-    m_LetterA->Render(m_Renderer->GetNativeRenderer());
-}
+        for (auto* letter : m_Letters)
+        {
+            if (letter && letter->IsValid())
+            {
+                letter->Render(m_Renderer->GetNativeRenderer());
+            }
+        }
     }
 
     void GameLevel::UpdateGameLevel(float deltaTime)
