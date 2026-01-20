@@ -35,6 +35,8 @@
 
         void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
 
+        Mechanism::Window& m_Window;
+        Mechanism::Actor* m_LetterA;
         Mechanism::Renderer* m_Renderer;
         Mechanism::Actor* m_Background;
         Spaceship* m_Player;
