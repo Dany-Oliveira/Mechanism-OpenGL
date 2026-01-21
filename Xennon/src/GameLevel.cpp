@@ -41,8 +41,13 @@ GameLevel::GameLevel(Mechanism::Window& window) :
 
 
 
-        //do text stuff
-        DisplayText("HELLO WORLD", 100.0f, 50.0f, 3.0f, 5.0f);
+        // messagem no superior esquerdo
+        DisplayText("Player One:", 20.0f, 20.0f, 0.7f, 0.5f);
+
+		// mensagem no centro superior
+        float hiScoreWidth = 9 * (21 * 0.7f + 0.5f); // puz aqui o nove pq ha 9 letras em "High score" para ficar no centro. Se quiseres mudar muda tmb esse numero
+        float centerX = (m_WindowWidth - hiScoreWidth) / 2.0f;
+        DisplayText("Hi score:", centerX, 20.0f, 1.0f, 1.0f);
 
 
 

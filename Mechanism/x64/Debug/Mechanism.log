@@ -1,0 +1,118 @@
+﻿  Input.cpp
+  Box2DBody.cpp
+  Box2DWorld.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Box2DWorld.h(40,40): warning C4251: 'Mechanism::Box2DWorld::m_CollisionBeginCallback': 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>' needs to have dll-interface to be used by clients of 'Mechanism::Box2DWorld'
+  (compiling source file 'src/Mechanism/Box2DWorld.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(1089,7):
+      see declaration of 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/Mechanism/Box2DWorld.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Actor.h(65,28): warning C4251: 'Mechanism::Actor::m_Texture': 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>' needs to have dll-interface to be used by clients of 'Mechanism::Actor'
+  (compiling source file 'src/Mechanism/Box2DWorld.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>'
+  
+  Actor.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/Mechanism/Actor.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Actor.h(65,28): warning C4251: 'Mechanism::Actor::m_Texture': 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>' needs to have dll-interface to be used by clients of 'Mechanism::Actor'
+  (compiling source file 'src/Mechanism/Actor.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Actor.cpp(11,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Animation.cpp
+  Level.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Box2DWorld.h(40,40): warning C4251: 'Mechanism::Box2DWorld::m_CollisionBeginCallback': 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>' needs to have dll-interface to be used by clients of 'Mechanism::Box2DWorld'
+  (compiling source file 'src/Mechanism/Level.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(1089,7):
+      see declaration of 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Level.h(25,31): warning C4251: 'Mechanism::Level::m_Box2DWorld': 'std::unique_ptr<Mechanism::Box2DWorld,std::default_delete<Mechanism::Box2DWorld>>' needs to have dll-interface to be used by clients of 'Mechanism::Level'
+  (compiling source file 'src/Mechanism/Level.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Box2DWorld,std::default_delete<Mechanism::Box2DWorld>>'
+  
+  Pawn.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/Mechanism/Pawn.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Actor.h(65,28): warning C4251: 'Mechanism::Actor::m_Texture': 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>' needs to have dll-interface to be used by clients of 'Mechanism::Actor'
+  (compiling source file 'src/Mechanism/Pawn.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>'
+  
+  Renderer.cpp
+  Application.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Window.h(61,29): warning C4251: 'Mechanism::Window::m_Renderer': 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>' needs to have dll-interface to be used by clients of 'Mechanism::Window'
+  (compiling source file 'src/Mechanism/Application.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/Mechanism/Application.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Application.h(37,27): warning C4251: 'Mechanism::Application::m_Window': 'std::unique_ptr<Mechanism::Window,std::default_delete<Mechanism::Window>>' needs to have dll-interface to be used by clients of 'Mechanism::Application'
+  (compiling source file 'src/Mechanism/Application.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Window,std::default_delete<Mechanism::Window>>'
+  
+  Texture.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/Mechanism/Texture.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+  Window.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Window.h(61,29): warning C4251: 'Mechanism::Window::m_Renderer': 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>' needs to have dll-interface to be used by clients of 'Mechanism::Window'
+  (compiling source file 'src/Mechanism/Window.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>'
+  
+  Generating Code...
+box2dd.lib(geometry.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(geometry.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(types.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(types.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(body.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(body.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(physics_world.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(physics_world.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(shape.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(shape.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(core.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(core.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(math_functions.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(math_functions.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(hull.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(hull.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(distance.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(distance.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(solver_set.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(solver_set.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(contact.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(contact.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(id_pool.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(id_pool.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(island.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(island.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(broad_phase.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(broad_phase.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(arena_allocator.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(arena_allocator.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(sensor.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(sensor.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(timer.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(timer.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(aabb.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(aabb.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(bitset.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(bitset.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(table.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(table.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(dynamic_tree.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(dynamic_tree.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(constraint_graph.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(constraint_graph.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(solver.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(solver.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(manifold.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(manifold.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(array.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(array.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(distance_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(distance_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(motor_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(motor_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(prismatic_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(prismatic_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(revolute_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(revolute_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(weld_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(weld_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(wheel_joint.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(wheel_joint.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+box2dd.lib(contact_solver.obj) : warning LNK4099: PDB 'box2dd.pdb' was not found with 'box2dd.lib(contact_solver.obj)' or at 'C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\box2dd.pdb'; linking object as if no debug info
+     Creating library C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\Mechanism-OpenGL.lib and object C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\Mechanism-OpenGL.exp
+  Mechanism.vcxproj -> C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\Mechanism-OpenGL.dll

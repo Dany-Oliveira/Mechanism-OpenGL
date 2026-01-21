@@ -1,0 +1,41 @@
+﻿  GameLevel.cpp
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Box2DWorld.h(40,40): warning C4251: 'Mechanism::Box2DWorld::m_CollisionBeginCallback': 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>' needs to have dll-interface to be used by clients of 'Mechanism::Box2DWorld'
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(1089,7):
+      see declaration of 'std::function<void (Mechanism::Actor *,Mechanism::Actor *)>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Level.h(25,31): warning C4251: 'Mechanism::Level::m_Box2DWorld': 'std::unique_ptr<Mechanism::Box2DWorld,std::default_delete<Mechanism::Box2DWorld>>' needs to have dll-interface to be used by clients of 'Mechanism::Level'
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Box2DWorld,std::default_delete<Mechanism::Box2DWorld>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Texture.h(31,15): warning C4251: 'Mechanism::Texture::m_Filepath': 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of 'Mechanism::Texture'
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Actor.h(65,28): warning C4251: 'Mechanism::Actor::m_Texture': 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>' needs to have dll-interface to be used by clients of 'Mechanism::Actor'
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Texture,std::default_delete<Mechanism::Texture>>'
+  
+C:\Users\jpereira\Mechanism-OpenGL\Mechanism\src\Mechanism\Window.h(61,29): warning C4251: 'Mechanism::Window::m_Renderer': 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>' needs to have dll-interface to be used by clients of 'Mechanism::Window'
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr<Mechanism::Renderer,std::default_delete<Mechanism::Renderer>>'
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\optional(11): warning STL4038: The contents of <optional> are available only with C++17 or later.
+C:\Users\jpereira\Mechanism-OpenGL\Xennon\src\GameLevel.cpp(209,10): warning C4129: 'P': unrecognized character escape sequence
+C:\Users\jpereira\Mechanism-OpenGL\Xennon\src\GameLevel.cpp(322,64): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56): warning C4244:             _Ty=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56): warning C4244:         ]
+  (compiling source file 'src/GameLevel.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3630,56):
+      the template instantiation context (the oldest one first) is
+          C:\Users\jpereira\Mechanism-OpenGL\Xennon\src\GameLevel.cpp(164,32):
+          see reference to function template instantiation 'std::unique_ptr<Mechanism::Actor,std::default_delete<Mechanism::Actor>> std::make_unique<Mechanism::Actor,void*,const char(&)[19],int,int,int,int,int,0>(void *&&,const char (&)[19],int &&,int &&,int &&,int &&,int &&)' being compiled
+  
+  Xennon.vcxproj -> C:\Users\jpereira\Mechanism-OpenGL\x64\Debug\Xennon.exe
