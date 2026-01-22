@@ -4,6 +4,7 @@
 #include "Mechanism/Actor.h"
 #include "Mechanism/Window.h"
 #include "Mechanism/Renderer.h"
+#include "Mechanism/HealthBar.h"
 #include "Spaceship.h"  
 #include "Projectile.h"
 #include "Enemy.h"
@@ -12,39 +13,44 @@
 
 
 
-    class GameLevel : public Mechanism::Level
-    {
 
-    public:
-        GameLevel(Mechanism::Window& window);
-        virtual ~GameLevel();
+class GameLevel : public Mechanism::Level
+{
 
-        void Render() override;
-        void UpdateGameLevel(float deltaTime);
+public:
+    GameLevel(Mechanism::Window& window);
+    virtual ~GameLevel();
 
-		void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows);
+    void Render() override;
+    void UpdateGameLevel(float deltaTime);
 
-		void SpawnPlayer(float x, float y);
-		void SpawnProjectile(float x, float y);
+    void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows);
 
-        void AddBackground();
-        void ClearAllActors();
+    void SpawnPlayer(float x, float y);
+    void SpawnProjectile(float x, float y);
+
+    void AddBackground();
+    void ClearAllActors();
 
 
-    private:
+private:
 
-        void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
+    void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
 
-        Mechanism::Renderer* m_Renderer;
-        Mechanism::Actor* m_Background;
-        Spaceship* m_Player;
+    Mechanism::Window& m_Window;
+    std::vector<Mechanism::Actor*> m_Letters;
+    void DisplayText(const std::string& text, float startX, float startY, float scale = 5.0f, float spacing = 5.0f);
+    Mechanism::Renderer* m_Renderer;
+    Mechanism::Actor* m_Background;
+    Spaceship* m_Player;
 
-		int m_WindowWidth;
-		int m_WindowHeight;
+    int m_WindowWidth;
+    int m_WindowHeight;
 
-        std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
-        std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
-		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
-        
-    };
+    std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
+    std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
+    std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
 
+    std::unique_ptr<Mechanism::HealthBar> m_HealthBar;
+
+};

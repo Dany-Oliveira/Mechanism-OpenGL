@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="HealthBar.h" />
     <ClInclude Include="src\Mechanism\Input.h" />
     <ClInclude Include="src\Mechanism\Box2DBody.h" />
     <ClInclude Include="src\Mechanism\Box2DWorld.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="src\Mechanism\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Mechanism\HealthBar.cpp" />
     <ClCompile Include="src\Mechanism\Input.cpp" />
     <ClCompile Include="src\Mechanism\Box2DBody.cpp" />
     <ClCompile Include="src\Mechanism\Box2DWorld.cpp" />
