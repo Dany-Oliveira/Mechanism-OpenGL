@@ -26,7 +26,7 @@
         void UpdateGameLevel(float deltaTime);
 
 		void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows,
-            std::function<void(Enemy*, float)> movementDirection);
+            std::function<void(Enemy*, float)> movementDirection, Enemy::EnemyType type, int health);
 
 		void SpawnPlayer(float x, float y);
 		void SpawnProjectile(float x, float y);
@@ -38,6 +38,7 @@
         std::function<void(Enemy*, float)> LonerMovement();
         std::function<void(Enemy*, float)> RusherMovement();
         std::function<void(Enemy*, float)> DroneMovement();
+        std::function<void(Enemy*, float)> AsteroidMovement();
 
     private:
 
@@ -49,6 +50,9 @@
 
 		int m_WindowWidth;
 		int m_WindowHeight;
+
+        float m_EnemySpawnTimer;
+        float m_EnemySpawnInterval;
 
         std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
         std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   

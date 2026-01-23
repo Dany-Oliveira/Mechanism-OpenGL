@@ -61,9 +61,6 @@ namespace Mechanism
             s_SDLInitialized = true;
         }
 
-        
-
-
         // Create SDL window
         SDL_Window* window = SDL_CreateWindow(
             m_Data->title.c_str(), 

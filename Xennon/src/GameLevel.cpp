@@ -5,9 +5,11 @@
 
     GameLevel::GameLevel(Mechanism::Window& window): Level(0.0f, 0.0f), 
         m_Renderer(&window.GetRenderer()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
-		m_Background(nullptr), m_Player(nullptr)
+		m_Background(nullptr), m_Player(nullptr), m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f)
     {
         printf("\nGameLevel created!\n");
+
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
         GetBox2DWorld().SetCollisionBeginCallback([this](Mechanism::Actor* actorA, Mechanism::Actor* actorB)
             {
@@ -15,24 +17,9 @@
 			});
 
 		AddBackground();
-
-        SpawnEnemy("assets/LonerA.bmp", 100.0f, 100.0f, 4, 4, LonerMovement());
-        
-       
-        m_Enemies.back()->SetCanShoot(true);
-        m_Enemies.back()->SetShootInterval(2.0f);
-        m_Enemies.back()->SetEnemyShootCallback([this](float bulletX, float bulletY, float targetX, float targetY)
-            {
-                SpawnEnemyProjectile(bulletX, bulletY, targetX, targetY);
-            });
-        //Enemies spawned after this line will not shoot
-
-        SpawnEnemy("assets/rusher.bmp", 500.0f, 300.0f, 6, 4, RusherMovement());
-        SpawnEnemy("assets/drone.bmp", m_WindowWidth / 2.0f, 0, 8, 2, DroneMovement());
           
 		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
 
-        printf("Spawned %zu actors\n", m_Actors.size());
     }
 
     GameLevel::~GameLevel()
@@ -61,7 +48,7 @@
 
 
     void GameLevel::SpawnEnemy(const char* texturePath, float xPos, float yPos, int cols, int rows,
-        std::function<void(Enemy*, float)> movementPattern)
+        std::function<void(Enemy*, float)> movementPattern, Enemy::EnemyType type, int health)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
         auto enemy = std::make_unique<Enemy>(m_Renderer->GetNativeRenderer(), texturePath, xPos, yPos, cols, rows, 0);
@@ -70,6 +57,8 @@
 		enemy->SetCollisionTag(Mechanism::Actor::CollisionTag::Enemy); //Set collision tag to indentify as enemy
 
         enemy->SetMovementPattern(movementPattern);
+        enemy->SetEnemyType(type);
+        enemy->SetHealth(health);
 
 		m_Enemies.push_back(std::move(enemy));
 
@@ -98,6 +87,7 @@
 		printf("\Player spawned at (%.0f, %.0f)\n\n", xPos, yPos);
     }
 
+
     void GameLevel::SpawnProjectile(float x, float y)
     {
 		auto projectile = std::make_unique<Projectile>(m_Renderer->GetNativeRenderer(), "assets/missile.bmp", x, y, 1, 1, 0);
@@ -108,6 +98,7 @@
 		m_Projectiles.push_back(std::move(projectile));
 		printf("Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
+
 
     void GameLevel::SpawnEnemyProjectile(float x, float y, float targetX, float targetY)
     {
@@ -121,6 +112,7 @@
 
         printf("Enemy Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
+
 
     std::function<void(Enemy*, float)> GameLevel::LonerMovement()
     {
@@ -142,6 +134,17 @@
                 if (enemy->HasPhysicsBody())
                 {
                     enemy->MoveInDirection(0.0f, 1.0f, 1.0f); //vertical only
+                }
+            };
+    }
+
+    std::function<void(Enemy*, float)> GameLevel::AsteroidMovement()
+    {
+        return [](Enemy* enemy, float direction)
+            {
+                if (enemy->HasPhysicsBody())
+                {
+                    enemy->MoveInDirection(0.0f, 1.0f, 0.5f); //vertical only
                 }
             };
     }
@@ -194,6 +197,95 @@
     void GameLevel::UpdateGameLevel(float deltaTime)
     {
 		Level::Update(deltaTime);
+
+        //Enemy Spawner
+        m_EnemySpawnTimer += deltaTime;
+        if(m_EnemySpawnTimer >= m_EnemySpawnInterval)
+        {
+            //Pick a random enemie type 
+            int randomType = std::rand() % 7;
+
+            float spawnX = (std::rand() % (m_WindowWidth - 100)) + 50.0f;
+            float spawnY = 50.0f;
+
+            switch(randomType)
+            {
+                case 0: //Loner
+
+                    /* variable order - texture location, location to spawn X and then Y, number of col and rows for the texture,
+                    movement fucntion, Enemy Type(Enum class), Health */
+                    SpawnEnemy("assets/LonerA.bmp", spawnX, spawnY, 4, 4, LonerMovement(), Enemy::EnemyType::Loner, 100);
+
+                    //this enemy starts shooting
+                    m_Enemies.back()->SetCanShoot(true);
+                    m_Enemies.back()->SetShootInterval(2.0f);
+                    m_Enemies.back()->SetEnemyShootCallback([this](float bulletX, float bulletY, float targetX, float targetY)
+                        {
+                            SpawnEnemyProjectile(bulletX, bulletY, targetX, targetY);
+                        });
+                    break;
+
+                case 1:  // Rusher
+                    SpawnEnemy("assets/rusher.bmp", spawnX, spawnY, 6, 4, RusherMovement(), Enemy::EnemyType::Rusher, 50);
+                    break;
+
+                case 2:  // Drone
+                    SpawnEnemy("assets/drone.bmp", spawnX, spawnY, 8, 2, DroneMovement(), Enemy::EnemyType::Drone, 50);
+                    m_Enemies.back()->ScaleActor(1.5f, 1.5f);
+                    break;
+
+                case 3: //Stone Asteroid
+                    SpawnEnemy("assets/SAster96.bmp", spawnX, spawnY, 5, 5, AsteroidMovement(), Enemy::EnemyType::BigStoneAsteroid, 300);
+                    m_Enemies.back()->ScaleActor(1.5f, 1.5f);
+                    m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
+                        {
+                            if(type == Enemy::EnemyType::BigStoneAsteroid)
+                            {
+                                SpawnEnemy("assets/SAster64.bmp", x - 50.0f, y, 8, 3, AsteroidMovement(), 
+                                    Enemy::EnemyType::MediumStoneAsteroid, 200);
+                                m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
+                                    {
+                                        if(type == Enemy::EnemyType::MediumStoneAsteroid)
+                                        {
+                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                        }
+                                    });
+
+                                SpawnEnemy("assets/SAster64.bmp", x + 50.0f, y, 8, 3, AsteroidMovement(),
+                                    Enemy::EnemyType::MediumStoneAsteroid, 200);
+                                m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
+                                    {
+                                        if (type == Enemy::EnemyType::MediumStoneAsteroid)
+                                        {
+                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                        }
+                                    });
+                            }
+                        });
+                    break;
+
+                case 4: //Big Metal Asteroid
+                    SpawnEnemy("assets/MAster96.bmp", spawnX, spawnY, 5, 5, AsteroidMovement(), Enemy::EnemyType::BigMetalAsteroid, 9999);
+                    m_Enemies.back()->ScaleActor(1.5f, 1.5f);
+                    break;
+
+                case 5: //Medium Metal Asteroid
+                    SpawnEnemy("assets/MAster64.bmp", spawnX, spawnY, 8, 3, AsteroidMovement(), Enemy::EnemyType::MediumMetalAsteroid, 9999);
+                    break;
+
+                case 6: //Small Metal Asteroid
+                    SpawnEnemy("assets/MAster32.bmp", spawnX, spawnY, 8, 2, AsteroidMovement(), Enemy::EnemyType::SmallMetalAsteroid, 9999);
+                    break;
+            }
+
+            m_EnemySpawnTimer = 0.0f;
+        }
 
         // Update player-specific logic
         if (m_Player)

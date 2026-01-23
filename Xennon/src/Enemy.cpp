@@ -11,7 +11,7 @@ Enemy::Enemy(void* renderer, const char* texturePath, float x, float y, int grid
 
 Enemy::~Enemy()
 {
-	std::cout << "Enemy destroyed.\n";
+	
 }
 
 void Enemy::TakeDamage(int damage)
@@ -19,6 +19,11 @@ void Enemy::TakeDamage(int damage)
 	health -= damage;
 	if (health <= 0)
 	{
+		if(m_DeathCallback)
+		{
+			m_DeathCallback(GetX(), GetY(), m_EnemyType);
+		}
+
 		SetIsDead(true);
 	}
 }
@@ -27,7 +32,7 @@ void Enemy::OnCollisionBegin(Mechanism::Actor* other)
 {
 	if(other && other->GetCollisionTag() == Mechanism::Actor::CollisionTag::Projectile)
 	{
-		TakeDamage(100); // Example damage value
+		TakeDamage(50); // Example damage value
 	}
 }
 
