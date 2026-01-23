@@ -18,7 +18,8 @@ namespace Mechanism
             Player,
             Enemy,
             Projectile,
-            Background
+            Background,
+            EnemyProjectile
         };
 
         Actor(void* renderer, const char* texturePath, float x, float y,

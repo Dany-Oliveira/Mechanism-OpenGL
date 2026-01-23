@@ -7,8 +7,10 @@
 #include "Spaceship.h"  
 #include "Projectile.h"
 #include "Enemy.h"
+#include "EnemyProjectile.h"
 #include <memory>  
 #include <optional>
+#include <functional>
 
 
 
@@ -16,20 +18,26 @@
     {
 
     public:
+
         GameLevel(Mechanism::Window& window);
         virtual ~GameLevel();
 
         void Render() override;
         void UpdateGameLevel(float deltaTime);
 
-		void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows);
+		void SpawnEnemy(const char* texturePath, float x, float y, int cols, int rows,
+            std::function<void(Enemy*, float)> movementDirection);
 
 		void SpawnPlayer(float x, float y);
 		void SpawnProjectile(float x, float y);
+        void SpawnEnemyProjectile(float x, float y, float targetX, float targetY);
 
         void AddBackground();
         void ClearAllActors();
 
+        std::function<void(Enemy*, float)> LonerMovement();
+        std::function<void(Enemy*, float)> RusherMovement();
+        std::function<void(Enemy*, float)> DroneMovement();
 
     private:
 
@@ -45,6 +53,7 @@
         std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
         std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
 		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
+        std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemie projectiles
         
     };
 

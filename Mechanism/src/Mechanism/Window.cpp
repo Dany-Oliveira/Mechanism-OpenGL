@@ -61,13 +61,15 @@ namespace Mechanism
             s_SDLInitialized = true;
         }
 
+        
+
 
         // Create SDL window
         SDL_Window* window = SDL_CreateWindow(
             m_Data->title.c_str(), 
             m_Data->width,
             m_Data->height,
-            SDL_WINDOW_RESIZABLE);
+            SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 
         if (!window) 
         {

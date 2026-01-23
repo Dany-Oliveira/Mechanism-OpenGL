@@ -9,17 +9,27 @@
     {
         printf("\nGameLevel created!\n");
 
-        GetBox2DWorld().SetCollisionBeginCallback(
-            [this](Mechanism::Actor* actorA, Mechanism::Actor* actorB)
+        GetBox2DWorld().SetCollisionBeginCallback([this](Mechanism::Actor* actorA, Mechanism::Actor* actorB)
             {
                 OnCollisionBegin(actorA, actorB);
 			});
 
 		AddBackground();
 
-		SpawnEnemy("assets/LonerA.bmp", 300.0f, 100.0f, 4, 4);
-		SpawnEnemy("assets/rusher.bmp", 500.0f, 300.0f, 6, 4);
+        SpawnEnemy("assets/LonerA.bmp", 100.0f, 100.0f, 4, 4, LonerMovement());
+        
+       
+        m_Enemies.back()->SetCanShoot(true);
+        m_Enemies.back()->SetShootInterval(2.0f);
+        m_Enemies.back()->SetEnemyShootCallback([this](float bulletX, float bulletY, float targetX, float targetY)
+            {
+                SpawnEnemyProjectile(bulletX, bulletY, targetX, targetY);
+            });
+        //Enemies spawned after this line will not shoot
 
+        SpawnEnemy("assets/rusher.bmp", 500.0f, 300.0f, 6, 4, RusherMovement());
+        SpawnEnemy("assets/drone.bmp", m_WindowWidth / 2.0f, 0, 8, 2, DroneMovement());
+          
 		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
 
         printf("Spawned %zu actors\n", m_Actors.size());
@@ -50,13 +60,16 @@
     }
 
 
-    void GameLevel::SpawnEnemy(const char* texturePath, float xPos, float yPos, int cols, int rows)
+    void GameLevel::SpawnEnemy(const char* texturePath, float xPos, float yPos, int cols, int rows,
+        std::function<void(Enemy*, float)> movementPattern)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
         auto enemy = std::make_unique<Enemy>(m_Renderer->GetNativeRenderer(), texturePath, xPos, yPos, cols, rows, 0);
 
 		enemy->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for enemy
 		enemy->SetCollisionTag(Mechanism::Actor::CollisionTag::Enemy); //Set collision tag to indentify as enemy
+
+        enemy->SetMovementPattern(movementPattern);
 
 		m_Enemies.push_back(std::move(enemy));
 
@@ -96,34 +109,86 @@
 		printf("Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
 
-    void GameLevel::Render()
+    void GameLevel::SpawnEnemyProjectile(float x, float y, float targetX, float targetY)
     {
-        // Render all actors
-        for (const auto& actor : m_Actors)
-        {
-            if (actor)
-            {
-                actor->Render(m_Renderer->GetNativeRenderer());
-            }
-        }
+        auto projectile = std::make_unique<EnemyProjectile>(m_Renderer->GetNativeRenderer(), "assets/EnWeap6.bmp", 
+            x, y, targetX, targetY, 8, 1, 0);
 
-		// Render all enemies
-        for (const auto& enemy : m_Enemies)
-        {
-            if(enemy)
-            {
-				enemy->Render(m_Renderer->GetNativeRenderer());
-            }
-        }
+        projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true);
+        projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::EnemyProjectile);
 
-		// Render all projectiles
-        for (const auto& projectile : m_Projectiles)
-        {
-            if(projectile)
+        m_EnemyProjectiles.push_back(std::move(projectile));
+
+        printf("Enemy Projectile spawned at (%.0f, %.0f)\n\n", x, y);
+    }
+
+    std::function<void(Enemy*, float)> GameLevel::LonerMovement()
+    {
+        return [](Enemy* enemy, float direction)
             {
-				projectile->Render(m_Renderer->GetNativeRenderer());
-            }
+                if (enemy->HasPhysicsBody())
+                {
+                    int phase = ((int)(enemy->GetTimeAlive() / 10.0f)) % 2;
+                    float direction = phase == 0 ? 1.0f : -1.0f; //1 right, -1 left
+                    enemy->MoveInDirection(direction, 0.0f, 1.0f);
+                }
+            };
+    }
+
+    std::function<void(Enemy*, float)> GameLevel::RusherMovement()
+    {
+        return [](Enemy* enemy, float direction)
+            {
+                if (enemy->HasPhysicsBody())
+                {
+                    enemy->MoveInDirection(0.0f, 1.0f, 1.0f); //vertical only
+                }
+            };
+    }
+
+    std::function<void(Enemy*, float)> GameLevel::DroneMovement()
+    {
+        return [](Enemy* enemy, float deltaTime)
+            {
+                if(enemy->HasPhysicsBody())
+                {
+                    float waveSpeed = 3.0f; // How fast the wave oscillates
+                    float waveAmplitude = 100.0f; // How wide the wave is
+                    float moveSpeed = 1.5f; // How fast it moves down
+
+                    // Calculate horizontal position using sine wave
+                    float timeAlive = enemy->GetTimeAlive();
+                    float waveOffset = sin(timeAlive * waveSpeed) * waveAmplitude;
+
+                    float targetX = enemy->GetStartX() + waveOffset;
+
+                    // Calculate direction to move horizontally
+                    float currentX = enemy->GetX();
+                    float directionX = (targetX > currentX) ? 1.0 : -1.0f;
+
+                    // Move in wave pattern while going down
+                    enemy->MoveInDirection(directionX, 1.0f, moveSpeed);
+                }
+            };
+    }
+
+    void GameLevel::OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB)
+    {
+        if (!actorA || !actorB)
+        {
+            return;
         }
+        // Notify both actors of the collision
+        actorA->OnCollisionBegin(actorB);
+        actorB->OnCollisionBegin(actorA);
+    }
+
+
+    void GameLevel::ClearAllActors()
+    {
+        m_Actors.clear();
+        m_Background = nullptr;
+        m_Player = nullptr;
     }
 
     void GameLevel::UpdateGameLevel(float deltaTime)
@@ -150,6 +215,14 @@
         {
             if (enemy)
             {
+                if(m_Player)
+                {
+                    //Get the center of the player
+                    float playerCenterX = m_Player->GetX() + (m_Player->GetFrameWidth() / 2.0f);
+                    float playerCenterY = m_Player->GetY() + (m_Player->GetFrameHeight() / 2.0f);
+                    enemy->SetPlayerPosition(playerCenterX, playerCenterY);
+                }
+                enemy->UpdateEnemy(deltaTime);
                 enemy->UpdateActor(deltaTime);
             }
 		}
@@ -163,6 +236,18 @@
 				projectile->UpdateActor(deltaTime);
             }
         }
+
+        //Update all enemy projectiles
+        for (auto& enemyProjectile : m_EnemyProjectiles)
+        {
+            if (enemyProjectile)
+            {
+                enemyProjectile->UpdateEnemyProjectile(deltaTime);
+                enemyProjectile->UpdateActor(deltaTime);
+                enemyProjectile->ScaleActor(2.0f, 2.0f);
+            }
+        }
+
 
 		//Remove dead enemies
         m_Enemies.erase(
@@ -184,26 +269,61 @@
             m_Projectiles.end()
 		);
 
+        //Remove off-screen enemy projectiles
+        m_EnemyProjectiles.erase(
+            std::remove_if(m_EnemyProjectiles.begin(), m_EnemyProjectiles.end(),
+                [this](const std::unique_ptr<EnemyProjectile>& proj)
+                {
+                    return proj->IsDead() || proj->IsOffScreen(m_WindowHeight);
+                }),
+            m_EnemyProjectiles.end()
+        );
+
     }
 
-    void GameLevel::OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB)
+    void GameLevel::Render()
     {
-        if (!actorA || !actorB)
+        // Render all actors
+        for (const auto& actor : m_Actors)
         {
-            return;
+            if (actor)
+            {
+                actor->Render(m_Renderer->GetNativeRenderer());
+            }
         }
-        // Notify both actors of the collision
-        actorA->OnCollisionBegin(actorB);
-        actorB->OnCollisionBegin(actorA);
+
+        // Render all enemies
+        for (const auto& enemy : m_Enemies)
+        {
+            if (enemy)
+            {
+                enemy->Render(m_Renderer->GetNativeRenderer());
+            }
+        }
+
+        // Render all projectiles
+        for (const auto& projectile : m_Projectiles)
+        {
+            if (projectile)
+            {
+                projectile->Render(m_Renderer->GetNativeRenderer());
+            }
+        }
+
+        //Render all enemy projectiles
+        for (const auto& enemyProjectile : m_EnemyProjectiles)
+        {
+            if (enemyProjectile)
+            {
+                enemyProjectile->Render(m_Renderer->GetNativeRenderer());
+            }
+        }
     }
 
+   
 
-    void GameLevel::ClearAllActors()
-    {
-        m_Actors.clear();
-		m_Background = nullptr;
-		m_Player = nullptr;
-    }
+
+ 
 
  
 

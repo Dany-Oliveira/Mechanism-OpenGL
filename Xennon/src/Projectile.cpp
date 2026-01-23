@@ -18,7 +18,7 @@ void Projectile::UpdateProjectile(float deltaTime)
 	if(HasPhysicsBody())
 	{
 		// Move the projectile upwards at a constant speed
-		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f);// Divided by 100 to convert to Box2D units meters/second
+		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f); // Divided by 100 to convert to Box2D units meters/second
 	}
 }
 
