@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;MECHANISM_PLATFORM_WINDOWS;MECHANISM_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/box2d/include;$(SolutionDir)/SDL3/include;$(SolutionDir)/glad/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/glm;$(SolutionDir)/box2d/include;$(SolutionDir)/SDL3/include;$(SolutionDir)/glad/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -114,6 +114,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)/SDL3/lib;$(SolutionDir)/box2d/lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL3.lib;box2dd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -132,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Mechanism\SpriteRenderer.h" />
     <ClInclude Include="src\Mechanism\Input.h" />
     <ClInclude Include="src\Mechanism\Box2DBody.h" />
     <ClInclude Include="src\Mechanism\Box2DWorld.h" />
@@ -148,6 +153,8 @@
     <ClInclude Include="src\Mechanism\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\glad\src\glad.c" />
+    <ClCompile Include="src\Mechanism\SpriteRenderer.cpp" />
     <ClCompile Include="src\Mechanism\Input.cpp" />
     <ClCompile Include="src\Mechanism\Box2DBody.cpp" />
     <ClCompile Include="src\Mechanism\Box2DWorld.cpp" />
@@ -164,6 +171,10 @@
     <CopyFileToFolders Include="..\SDL3\lib\SDL3.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Mechanism\shaders\fragment_shader.glsl" />
+    <None Include="src\Mechanism\shaders\vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

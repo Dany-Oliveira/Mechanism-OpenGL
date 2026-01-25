@@ -1,13 +1,13 @@
 #pragma once
 #include "Core.h"
-#include "Renderer.h"
+#include "SpriteRenderer.h"
 #include <string>
-#include <memory>
+
+struct SDL_Window;
 
 namespace Mechanism
 {
-
-	struct WindowSettings 
+	struct WindowSettings
 	{
 		std::string windowTitle;
 		unsigned int windowWidth;
@@ -16,20 +16,22 @@ namespace Mechanism
 		WindowSettings(const std::string& title = "Mechanism Engine",
 			unsigned int width = 1280,
 			unsigned int height = 720)
-			:windowTitle(title), windowWidth(width), windowHeight(height) {}
-
+			: windowTitle(title), windowWidth(width), windowHeight(height) {
+		}
 	};
-
-	struct WindowData;
 
 	class MECHANISM_API Window
 	{
-
 	public:
 
 		Window(const WindowSettings& windowSettings = WindowSettings());
-
 		~Window();
+
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
+
+		Window(Window&& other) noexcept;
+		Window& operator=(Window&& other) noexcept;
 
 		void OnUpdate();
 
@@ -41,25 +43,29 @@ namespace Mechanism
 		bool IsVSync() const;
 		void SetVSync(bool enabled);
 
-		void* GetNativeWindow() const
-		{
-			return m_Window;
-		}
+		void* GetNativeWindow() const { return m_Window; }
 
-		Renderer& GetRenderer() 
-		{
-			return *m_Renderer;
-		}
+		void SwapBuffers();
+
+		SpriteRenderer& GetSpriteRenderer() { return m_SpriteRenderer; }
 
 	private:
 
-		bool m_CloseWindow = false;
+		struct WindowData
+		{
+			std::string title;
+			unsigned int width = 0;
+			unsigned int height = 0;
+			bool VSync = true;
+			bool shouldClose = false;
+		};
+
 		bool Init(const WindowSettings& windowSettings);
-		void Shutdown();
+		void Cleanup();
 
-		void* m_Window;
-		std::unique_ptr<Renderer> m_Renderer;
-		WindowData* m_Data;
+		SDL_Window* m_Window;
+		void* m_GLContext;
+		WindowData m_Data;
+		SpriteRenderer m_SpriteRenderer;
 	};
-
 }

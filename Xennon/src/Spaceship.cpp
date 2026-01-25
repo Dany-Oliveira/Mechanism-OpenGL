@@ -60,7 +60,7 @@ void Spaceship::PlayerUpdate(float deltaTime)
 	}
 
 	// Shooting
-	if(Mechanism::Input::IsKeyPressed(Mechanism::Input::KEY_SPACE))
+	if(Mechanism::Input::IsKeyPressed(Mechanism::Input::KEY_SPACE) && m_ShootCooldown <= 0.0f)
 	{
 		Shoot();
 		m_ShootCooldown = m_ShootCooldownTime;

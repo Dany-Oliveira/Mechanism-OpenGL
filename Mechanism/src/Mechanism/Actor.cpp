@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include "SpriteRenderer.h"
 #include <SDL3/SDL.h>
 #include <iostream>
 
@@ -79,35 +80,28 @@ namespace Mechanism
 		m_ScaleY = scaleY;
     }
 
-    void Actor::Render(void* renderer)
+    void Actor::Render(SpriteRenderer* renderer)
     {
         if (!m_Texture || !m_Texture->isValid() || !renderer)
             return;
-
-        SDL_Renderer* sdlRenderer = static_cast<SDL_Renderer*>(renderer);
-        SDL_Texture* sdlTexture = static_cast<SDL_Texture*>(m_Texture->GetSDLTexture());
 
         // Calculate which row and column this frame is in
         int col = m_CurrentFrame % m_GridColumns;
         int row = m_CurrentFrame / m_GridColumns;
 
-        // Source rectangle - which sprite to grab from the sheet
-        SDL_FRect srcRect = {
-            static_cast<float>(col * m_FrameWidth),
-            static_cast<float>(row * m_FrameHeight),
-            static_cast<float>(m_FrameWidth),
-            static_cast<float>(m_FrameHeight)
-        };
+        // Calculate the final dimensions with scale
+        float renderWidth = m_FrameWidth * m_ScaleX;
+        float renderHeight = m_FrameHeight * m_ScaleY;
 
-        // Destination - where to draw on screen
-        SDL_FRect destRect = {
-            m_X,
-            m_Y,
-            m_FrameWidth * m_ScaleX,
-			m_FrameHeight* m_ScaleY
-        };
-        
-        SDL_RenderTexture(sdlRenderer, sdlTexture, &srcRect, &destRect);
+        // Draw the sprite using OpenGL
+        renderer->DrawSprite(
+            m_Texture.get(), 
+            m_X, m_Y, 
+            renderWidth, renderHeight,
+            col * m_FrameWidth, row * m_FrameHeight,
+            m_FrameWidth, m_FrameHeight,
+            m_TextureWidth, m_TextureHeight
+        );
     }
 
     void Actor::SetPosition(float x, float y)

@@ -3,8 +3,8 @@
 #include <algorithm>
 
 
-    GameLevel::GameLevel(Mechanism::Window& window): Level(0.0f, 0.0f), 
-        m_Renderer(&window.GetRenderer()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
+    GameLevel::GameLevel(Mechanism::Window& window): Level(0.0f, 0.0f), m_SpriteRenderer(&window.GetSpriteRenderer()),
+        m_NativeWindow(window.GetNativeWindow()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
 		m_Background(nullptr), m_Player(nullptr), m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f)
     {
         printf("\nGameLevel created!\n");
@@ -34,7 +34,7 @@
     void GameLevel::AddBackground ()
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
-        auto background = std::make_unique<Mechanism::Actor>(m_Renderer->GetNativeRenderer(), "assets/galaxy2.bmp", 0, 0, 1, 1, 0);
+        auto background = std::make_unique<Mechanism::Actor>(m_NativeWindow, "assets/galaxy2.bmp", 0, 0, 1, 1, 0);
 
 		m_Background = background.get();
         if(m_Background)
@@ -51,7 +51,7 @@
         std::function<void(Enemy*, float)> movementPattern, Enemy::EnemyType type, int health)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
-        auto enemy = std::make_unique<Enemy>(m_Renderer->GetNativeRenderer(), texturePath, xPos, yPos, cols, rows, 0);
+        auto enemy = std::make_unique<Enemy>(m_NativeWindow, texturePath, xPos, yPos, cols, rows, 0);
 
 		enemy->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for enemy
 		enemy->SetCollisionTag(Mechanism::Actor::CollisionTag::Enemy); //Set collision tag to indentify as enemy
@@ -69,7 +69,7 @@
     void GameLevel::SpawnPlayer(float xPos, float yPos)
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
-        auto player = std::make_unique<Spaceship>(m_Renderer->GetNativeRenderer(), "assets/Ship1.bmp", xPos, yPos, 7, 1, 3);
+        auto player = std::make_unique<Spaceship>(m_NativeWindow, "assets/Ship1.bmp", xPos, yPos, 7, 1, 3);
 
 		player->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for player
 		player->SetCollisionTag(Mechanism::Actor::CollisionTag::Player); //Set collision tag to indentify as player
@@ -90,7 +90,7 @@
 
     void GameLevel::SpawnProjectile(float x, float y)
     {
-		auto projectile = std::make_unique<Projectile>(m_Renderer->GetNativeRenderer(), "assets/missile.bmp", x, y, 1, 1, 0);
+		auto projectile = std::make_unique<Projectile>(m_NativeWindow, "assets/missile.bmp", x, y, 1, 1, 0);
 
 		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); //Create physics body for projectile
 		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); //Set collision tag to indentify as projectile
@@ -102,7 +102,7 @@
 
     void GameLevel::SpawnEnemyProjectile(float x, float y, float targetX, float targetY)
     {
-        auto projectile = std::make_unique<EnemyProjectile>(m_Renderer->GetNativeRenderer(), "assets/EnWeap6.bmp", 
+        auto projectile = std::make_unique<EnemyProjectile>(m_NativeWindow, "assets/EnWeap6.bmp",
             x, y, targetX, targetY, 8, 1, 0);
 
         projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true);
@@ -380,7 +380,7 @@
         {
             if (actor)
             {
-                actor->Render(m_Renderer->GetNativeRenderer());
+                actor->Render(m_SpriteRenderer);
             }
         }
 
@@ -389,7 +389,7 @@
         {
             if (enemy)
             {
-                enemy->Render(m_Renderer->GetNativeRenderer());
+                enemy->Render(m_SpriteRenderer);
             }
         }
 
@@ -398,7 +398,7 @@
         {
             if (projectile)
             {
-                projectile->Render(m_Renderer->GetNativeRenderer());
+                projectile->Render(m_SpriteRenderer);
             }
         }
 
@@ -407,7 +407,7 @@
         {
             if (enemyProjectile)
             {
-                enemyProjectile->Render(m_Renderer->GetNativeRenderer());
+                enemyProjectile->Render(m_SpriteRenderer);
             }
         }
     }

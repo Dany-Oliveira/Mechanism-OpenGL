@@ -6,7 +6,9 @@
 
 namespace Mechanism
 {
-  
+
+    class SpriteRenderer;
+
     class MECHANISM_API Actor
     {
 
@@ -26,7 +28,7 @@ namespace Mechanism
             int gridColumns, int gridRows, int frameIndex = 0);
         virtual ~Actor();
 
-        void Render(void* renderer);
+        void Render(SpriteRenderer* renderer);
         void SetPosition(float x, float y);
         void UpdateActor(float deltaTime);
 

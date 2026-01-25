@@ -4,6 +4,7 @@
 #include "Mechanism/Actor.h"
 #include "Mechanism/Window.h"
 #include "Mechanism/Renderer.h"
+#include "Mechanism/SpriteRenderer.h"
 #include "Spaceship.h"  
 #include "Projectile.h"
 #include "Enemy.h"
@@ -44,9 +45,10 @@
 
         void OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB);
 
-        Mechanism::Renderer* m_Renderer;
+        void* m_NativeWindow;
         Mechanism::Actor* m_Background;
         Spaceship* m_Player;
+        Mechanism::SpriteRenderer* m_SpriteRenderer;
 
 		int m_WindowWidth;
 		int m_WindowHeight;
