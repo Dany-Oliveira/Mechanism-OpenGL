@@ -3,8 +3,14 @@
 #include <algorithm>
 
 
-    GameLevel::GameLevel(Mechanism::Window& window): Level(0.0f, 0.0f), m_SpriteRenderer(&window.GetSpriteRenderer()),
-        m_NativeWindow(window.GetNativeWindow()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
+
+GameLevel::GameLevel(Mechanism::Window& window) :
+    Level(0.0f, 0.0f),
+    m_Window(window),
+    m_SpriteRenderer(&window.GetSpriteRenderer()),
+    m_NativeWindow(window.GetNativeWindow()),
+    m_WindowWidth(window.GetWidth()),
+    m_WindowHeight(window.GetHeight()),
 		m_Background(nullptr), m_Player(nullptr), m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f)
     {
         printf("\nGameLevel created!\n");
@@ -20,13 +26,80 @@
           
 		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
 
+        //m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 40, 30, 20, 5);
+        //printf("HealthBar created\n");
+
+
+        //Mudar a posicao da barra
+        m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 50, 30, 20, 5);
+        printf("HealthBar created at position (10, 50) with max health: 10\n");
+        printf("HealthBar pointer: %p\n", m_HealthBar.get());
+
+        // message at top left
+        DisplayText("Player One:", 20.0f, 20.0f, 0.7f, 0.5f);
+
+        // message at top center
+        float hiScoreWidth = 9 * (21 * 0.7f + 0.5f);
+        float centerX = (m_WindowWidth - hiScoreWidth) / 2.0f;
+        DisplayText("Hi score:", centerX, 20.0f, 1.0f, 1.0f);
+} 
+
+void GameLevel::DisplayText(const std::string& text, float startX, float startY, float scale, float spacing)
+{
+    float currentX = startX;
+
+    for (char c : text)
+    {
+        int frameIndex = -1;
+
+        if (c == ' ')
+        {
+            currentX += 21 * scale + spacing;
+            continue;
+        }
+        else if (c >= 'A' && c <= 'Z')
+        {
+            frameIndex = 33 + (c - 'A');  // Uppercase A starts at frame 33
+        }
+        else if (c >= 'a' && c <= 'z')
+        {
+            frameIndex = 65 + (c - 'a');  // Lowercase a starts at frame 65
+        }
+        else if (c >= '0' && c <= '9')
+        {
+            frameIndex = 16 + (c - '0');  // Digit 0 starts at frame 16
+        }
+
+        if (frameIndex >= 0)
+        {
+            Mechanism::Actor* letter = new Mechanism::Actor(
+                m_NativeWindow,
+                "assets/font16x16.bmp",
+                currentX,
+                startY,
+                8,
+                12,
+                frameIndex
+            );
+            letter->ScaleActor(scale, scale);
+            m_Letters.push_back(letter);
+
+            currentX += 21 * scale + spacing;
+        }
     }
+}
 
     GameLevel::~GameLevel()
     {
         printf("GameLevel destroyed! Cleaning up %zu actors\n", m_Actors.size());
 		m_Projectiles.clear();
         ClearAllActors();
+
+        for (auto* letter : m_Letters)
+        {
+            delete letter;
+        }
+        m_Letters.clear();
     }
 
 
@@ -83,6 +156,9 @@
 
 		m_Player = player.get();
 		m_Actors.push_back(std::move(player));
+
+        m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 40, 30, 20, 5);
+        printf("HealthBar created\n");
        
 		printf("\Player spawned at (%.0f, %.0f)\n\n", xPos, yPos);
     }
@@ -402,7 +478,7 @@
             }
         }
 
-        //Render all enemy projectiles
+        // Render all enemy projectiles
         for (const auto& enemyProjectile : m_EnemyProjectiles)
         {
             if (enemyProjectile)
@@ -410,13 +486,24 @@
                 enemyProjectile->Render(m_SpriteRenderer);
             }
         }
+
+        // Render all letters (text)
+        for (auto* letter : m_Letters)
+        {
+            if (letter && letter->IsValid())
+            {
+                letter->Render(m_SpriteRenderer);
+            }
+        }
+
+        if (m_HealthBar)
+        {
+            printf("Rendering health bar at position with health: %d/%d\n",
+                m_HealthBar->GetCurrentHealth(), m_HealthBar->GetMaxHealth());
+            m_HealthBar->Render(m_SpriteRenderer);
+        }
+        else
+        {
+            printf("ERROR: m_HealthBar is null!\n");
+        }
     }
-
-   
-
-
- 
-
- 
-
-

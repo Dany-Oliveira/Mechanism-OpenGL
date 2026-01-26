@@ -5,6 +5,7 @@
 #include "Mechanism/Window.h"
 #include "Mechanism/Renderer.h"
 #include "Mechanism/SpriteRenderer.h"
+#include "Mechanism/HealthBar.h"
 #include "Spaceship.h"  
 #include "Projectile.h"
 #include "Enemy.h"
@@ -50,6 +51,7 @@
         Spaceship* m_Player;
         Mechanism::SpriteRenderer* m_SpriteRenderer;
 
+
 		int m_WindowWidth;
 		int m_WindowHeight;
 
@@ -60,6 +62,12 @@
         std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
 		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
         std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemie projectiles
+
+        Mechanism::Window& m_Window;
+        std::vector<Mechanism::Actor*> m_Letters;
+        std::unique_ptr<Mechanism::HealthBar> m_HealthBar;
+
+        void DisplayText(const std::string& text, float startX, float startY, float scale = 5.0f, float spacing = 5.0f);
         
     };
 

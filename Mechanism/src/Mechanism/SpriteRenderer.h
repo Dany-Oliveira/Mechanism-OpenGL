@@ -25,6 +25,8 @@ namespace Mechanism
 			int frameWidth, int frameHeight,
 			int textureWidth, int textureHeight);
 
+		unsigned int GetShaderProgram() const { return m_ShaderProgram; }
+
 	private:
 		void CreateShader();
 		void CreateQuad();

@@ -65,6 +65,8 @@ namespace Mechanism
 
 		glUseProgram(m_ShaderProgram);
 
+		glUniform1i(glGetUniformLocation(m_ShaderProgram, "useRectColor"), false);
+
 		// Create model matrix (position and scale)
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(x, y, 0.0f));

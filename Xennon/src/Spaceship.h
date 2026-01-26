@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "Mechanism/Pawn.h"
 #include <functional>
 

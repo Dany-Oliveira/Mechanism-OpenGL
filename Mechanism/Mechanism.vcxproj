@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Mechanism\HealthBar.h" />
     <ClInclude Include="src\Mechanism\SpriteRenderer.h" />
     <ClInclude Include="src\Mechanism\Input.h" />
     <ClInclude Include="src\Mechanism\Box2DBody.h" />
@@ -154,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\glad\src\glad.c" />
+    <ClCompile Include="src\Mechanism\HealthBar.cpp" />
     <ClCompile Include="src\Mechanism\SpriteRenderer.cpp" />
     <ClCompile Include="src\Mechanism\Input.cpp" />
     <ClCompile Include="src\Mechanism\Box2DBody.cpp" />
