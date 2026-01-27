@@ -12,6 +12,7 @@ namespace Mechanism
 
 	Application::~Application()
 	{
+
 	}
 
 	void Application::Run()

@@ -5,12 +5,8 @@
 
 
 GameLevel::GameLevel(Mechanism::Window& window) :
-    Level(0.0f, 0.0f),
-    m_Window(window),
-    m_SpriteRenderer(&window.GetSpriteRenderer()),
-    m_NativeWindow(window.GetNativeWindow()),
-    m_WindowWidth(window.GetWidth()),
-    m_WindowHeight(window.GetHeight()),
+    Level(0.0f, 0.0f), m_Window(window), m_SpriteRenderer(&window.GetSpriteRenderer()), 
+    m_NativeWindow(window.GetNativeWindow()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
 		m_Background(nullptr), m_Player(nullptr), m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f)
     {
         printf("\nGameLevel created!\n");
@@ -26,14 +22,10 @@ GameLevel::GameLevel(Mechanism::Window& window) :
           
 		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
 
-        //m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 40, 30, 20, 5);
-        //printf("HealthBar created\n");
-
-
+        
         //Mudar a posicao da barra
-        m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 50, 30, 20, 5);
-        printf("HealthBar created at position (10, 50) with max health: 10\n");
-        printf("HealthBar pointer: %p\n", m_HealthBar.get());
+        m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight-50, 30, 20, 5);
+        
 
         // message at top left
         DisplayText("Player One:", 20.0f, 20.0f, 0.7f, 0.5f);
@@ -156,10 +148,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
 		m_Player = player.get();
 		m_Actors.push_back(std::move(player));
-
-        m_HealthBar = std::make_unique<Mechanism::HealthBar>(10, 10, m_WindowHeight - 40, 30, 20, 5);
-        printf("HealthBar created\n");
-       
+  
 		printf("\Player spawned at (%.0f, %.0f)\n\n", xPos, yPos);
     }
 
@@ -498,8 +487,8 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
         if (m_HealthBar)
         {
-            printf("Rendering health bar at position with health: %d/%d\n",
-                m_HealthBar->GetCurrentHealth(), m_HealthBar->GetMaxHealth());
+			int currentHeight = m_Window.GetHeight();
+			m_HealthBar->SetPosition(10, currentHeight - 50);
             m_HealthBar->Render(m_SpriteRenderer);
         }
         else

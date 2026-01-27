@@ -31,6 +31,7 @@ void Spaceship::PlayerUpdate(float deltaTime)
 	float directionX = 0.0f;
 	float directionY = 0.0f;
 
+	
 	// Input handling
 	if(Mechanism::Input::IsKeyBeingPressed(Mechanism::Input::KEY_UP))
 	{

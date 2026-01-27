@@ -81,16 +81,12 @@ namespace Mechanism
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-#ifdef __APPLE__
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-#endif
-
         // Create SDL window with OpenGL 
         m_Window = SDL_CreateWindow(
             m_Data.title.c_str(),
             m_Data.width,
             m_Data.height,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
 
         if (!m_Window)
         {
@@ -184,6 +180,7 @@ namespace Mechanism
             {
                 Input::OnKeyUp(event.key.scancode);
             }
+
         }
     }
 

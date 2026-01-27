@@ -14,8 +14,8 @@ namespace Mechanism
 		unsigned int windowHeight;
 
 		WindowSettings(const std::string& title = "Mechanism Engine",
-			unsigned int width = 1280,
-			unsigned int height = 720)
+			unsigned int width = 1600,
+			unsigned int height = 900)
 			: windowTitle(title), windowWidth(width), windowHeight(height) {
 		}
 	};

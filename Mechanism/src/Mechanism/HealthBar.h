@@ -1,14 +1,12 @@
 #pragma once
 #include "Core.h"
 
-// Forward declaration
-namespace Mechanism
-{
-    class SpriteRenderer;
-}
 
 namespace Mechanism
 {
+
+    class SpriteRenderer;
+
     class MECHANISM_API HealthBar
     {
     public:
@@ -30,7 +28,6 @@ namespace Mechanism
 
     private:
         void UpdateColor();
-        void Initialize(SpriteRenderer* spriteRenderer);
 
         int m_CurrentHealth;
         int m_MaxHealth;
@@ -45,12 +42,6 @@ namespace Mechanism
         Color m_MediumHealthColor;
         Color m_LowHealthColor;
 
-        unsigned int m_VAO;
-        unsigned int m_VBO;
-        unsigned int m_WhiteTexture;
-        unsigned int m_ShaderProgram;
-        bool m_Initialized;
-        int m_ScreenWidth;
-        int m_ScreenHeight;
+        
     };
 }

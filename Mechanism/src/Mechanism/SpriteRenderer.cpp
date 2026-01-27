@@ -111,6 +111,31 @@ namespace Mechanism
 		glBindVertexArray(0);
 	}
 
+	//For the HealthBar
+	void SpriteRenderer::DrawColoredRectangle(float x, float y, float width, float height, float r, float g, float b, float a)
+	{
+		glUseProgram(m_ShaderProgram);
+
+		// Enable solid color mode
+		glUniform1i(glGetUniformLocation(m_ShaderProgram, "useRectColor"), true);
+		glUniform3f(glGetUniformLocation(m_ShaderProgram, "rectColor"), r, g, b);
+		glUniform1i(glGetUniformLocation(m_ShaderProgram, "useColorKey"), false);
+
+		// Create model matrix
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(x, y, 0.0f));
+		model = glm::scale(model, glm::vec3(width, height, 1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(m_ShaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+		// Set model matrix uniform
+		glBindVertexArray(m_VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+	
+		// Reset to texture mode
+		glUniform1i(glGetUniformLocation(m_ShaderProgram, "useRectColor"), false);
+	}
+
 	std::string SpriteRenderer::LoadShaderSource(const std::string& filepath)
 	{
 		std::ifstream file(filepath);
