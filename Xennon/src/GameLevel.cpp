@@ -7,7 +7,9 @@
 GameLevel::GameLevel(Mechanism::Window& window) :
     Level(0.0f, 0.0f), m_Window(window), m_SpriteRenderer(&window.GetSpriteRenderer()), 
     m_NativeWindow(window.GetNativeWindow()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
-		m_Background(nullptr), m_Player(nullptr), m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f)
+	m_Background(nullptr), m_Player(nullptr), 
+    m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f), 
+    m_PowerUpSpawnTimer(0.0f), m_PowerUpSpawnInterval(5.0f)
     {
         printf("\nGameLevel created!\n");
 
@@ -95,7 +97,6 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
     }
 
 
- 
     void GameLevel::AddBackground ()
     {
         // x   y  col row 0=its the srite in the col0 row0, the first sprite
@@ -127,9 +128,18 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
 		m_Enemies.push_back(std::move(enemy));
 
-		printf("Enemy spawned at (%.0f, %.0f)\n\n", xPos, yPos);
     }
 
+
+    void GameLevel::SpawnPowerUp(const char* texturePath, float x, float y, int cols, int rows, PowerUps::PowerUpType type)
+    {
+        auto powerup = std::make_unique<PowerUps>(m_NativeWindow, texturePath, x, y, cols, rows, type, 0);
+		powerup->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false);
+		powerup->SetCollisionTag(Mechanism::Actor::CollisionTag::PowerUp);
+
+		m_PowerUps.push_back(std::move(powerup));
+    }
+    
 
     void GameLevel::SpawnPlayer(float xPos, float yPos)
     {
@@ -141,9 +151,9 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 		player->SetSpeed(5.0f); // Set player speed
 
 		// Set up shooting callback
-        player->SetShootCallback([this](float x, float y)
+        player->SetShootCallback([this](float x, float y, int damage)
         {
-            SpawnProjectile(x, y);
+            SpawnProjectile(x, y, damage);
 		});
 
 		m_Player = player.get();
@@ -153,15 +163,14 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
     }
 
 
-    void GameLevel::SpawnProjectile(float x, float y)
+    void GameLevel::SpawnProjectile(float x, float y, int damage)
     {
-		auto projectile = std::make_unique<Projectile>(m_NativeWindow, "assets/missile.bmp", x, y, 1, 1, 0);
+		auto projectile = std::make_unique<Projectile>(m_NativeWindow, "assets/missile.bmp", x, y, 1, 1, 0, damage);
 
 		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); //Create physics body for projectile
 		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); //Set collision tag to indentify as projectile
 
 		m_Projectiles.push_back(std::move(projectile));
-		printf("Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
 
 
@@ -175,71 +184,9 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
         m_EnemyProjectiles.push_back(std::move(projectile));
 
-        printf("Enemy Projectile spawned at (%.0f, %.0f)\n\n", x, y);
     }
 
-
-    std::function<void(Enemy*, float)> GameLevel::LonerMovement()
-    {
-        return [](Enemy* enemy, float direction)
-            {
-                if (enemy->HasPhysicsBody())
-                {
-                    int phase = ((int)(enemy->GetTimeAlive() / 10.0f)) % 2;
-                    float direction = phase == 0 ? 1.0f : -1.0f; //1 right, -1 left
-                    enemy->MoveInDirection(direction, 0.0f, 1.0f);
-                }
-            };
-    }
-
-    std::function<void(Enemy*, float)> GameLevel::RusherMovement()
-    {
-        return [](Enemy* enemy, float direction)
-            {
-                if (enemy->HasPhysicsBody())
-                {
-                    enemy->MoveInDirection(0.0f, 1.0f, 1.0f); //vertical only
-                }
-            };
-    }
-
-    std::function<void(Enemy*, float)> GameLevel::AsteroidMovement()
-    {
-        return [](Enemy* enemy, float direction)
-            {
-                if (enemy->HasPhysicsBody())
-                {
-                    enemy->MoveInDirection(0.0f, 1.0f, 0.5f); //vertical only
-                }
-            };
-    }
-
-    std::function<void(Enemy*, float)> GameLevel::DroneMovement()
-    {
-        return [](Enemy* enemy, float deltaTime)
-            {
-                if(enemy->HasPhysicsBody())
-                {
-                    float waveSpeed = 3.0f; // How fast the wave oscillates
-                    float waveAmplitude = 100.0f; // How wide the wave is
-                    float moveSpeed = 1.5f; // How fast it moves down
-
-                    // Calculate horizontal position using sine wave
-                    float timeAlive = enemy->GetTimeAlive();
-                    float waveOffset = sin(timeAlive * waveSpeed) * waveAmplitude;
-
-                    float targetX = enemy->GetStartX() + waveOffset;
-
-                    // Calculate direction to move horizontally
-                    float currentX = enemy->GetX();
-                    float directionX = (targetX > currentX) ? 1.0 : -1.0f;
-
-                    // Move in wave pattern while going down
-                    enemy->MoveInDirection(directionX, 1.0f, moveSpeed);
-                }
-            };
-    }
-
+    
     void GameLevel::OnCollisionBegin(Mechanism::Actor* actorA, Mechanism::Actor* actorB)
     {
         if (!actorA || !actorB)
@@ -263,6 +210,46 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
     {
 		Level::Update(deltaTime);
 
+        if(m_Player && m_HealthBar)
+        {
+			m_HealthBar->SetCurrentHealth(m_Player->GetCurrentHealth());
+			m_HealthBar->SetMaxHealth(m_Player->GetMaxHealth());
+        }
+
+        m_PowerUpSpawnTimer += deltaTime;
+        if(m_PowerUpSpawnTimer >= m_PowerUpSpawnInterval)
+        {
+            float spawnX = (std::rand() % (m_WindowWidth - 100)) + 50.0f;
+            float spawnY = 50.0f;
+            int randomType = std::rand() % 2;
+            switch(randomType)
+            {
+                case 0:
+                    SpawnPowerUp("assets/PUShield.bmp", spawnX, spawnY, 4, 2, PowerUps::PowerUpType::Shield);
+
+                    m_PowerUps.back()->SetEffectCallback([this](PowerUps::PowerUpType type)
+                        {
+                            if(type == PowerUps::PowerUpType::Shield)
+                            {
+								m_Player->ApplyShieldPowerUp();
+                            }
+						});
+
+                    break;
+                case 1:
+                    SpawnPowerUp("assets/PUWeapon.bmp", spawnX, spawnY, 4, 2, PowerUps::PowerUpType::Weapon);
+                     m_PowerUps.back()->SetEffectCallback([this](PowerUps::PowerUpType type)
+                        {
+                            if(type == PowerUps::PowerUpType::Weapon)
+                            {
+                                m_Player->ApplyWeaponPowerUp();
+							}
+                         });
+                    break;
+            }
+            m_PowerUpSpawnTimer = 0.0f;
+		}
+
         //Enemy Spawner
         m_EnemySpawnTimer += deltaTime;
         if(m_EnemySpawnTimer >= m_EnemySpawnInterval)
@@ -279,7 +266,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
                     /* variable order - texture location, location to spawn X and then Y, number of col and rows for the texture,
                     movement fucntion, Enemy Type(Enum class), Health */
-                    SpawnEnemy("assets/LonerA.bmp", spawnX, spawnY, 4, 4, LonerMovement(), Enemy::EnemyType::Loner, 100);
+                    SpawnEnemy("assets/LonerA.bmp", spawnX, spawnY, 4, 4, Enemy::LonerMovement(), Enemy::EnemyType::Loner, 15);
 
                     //this enemy starts shooting
                     m_Enemies.back()->SetCanShoot(true);
@@ -291,44 +278,44 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                     break;
 
                 case 1:  // Rusher
-                    SpawnEnemy("assets/rusher.bmp", spawnX, spawnY, 6, 4, RusherMovement(), Enemy::EnemyType::Rusher, 50);
+                    SpawnEnemy("assets/rusher.bmp", spawnX, spawnY, 6, 4, Enemy::RusherMovement(), Enemy::EnemyType::Rusher, 10);
                     break;
 
                 case 2:  // Drone
-                    SpawnEnemy("assets/drone.bmp", spawnX, spawnY, 8, 2, DroneMovement(), Enemy::EnemyType::Drone, 50);
+                    SpawnEnemy("assets/drone.bmp", spawnX, spawnY, 8, 2, Enemy::DroneMovement(), Enemy::EnemyType::Drone, 10);
                     m_Enemies.back()->ScaleActor(1.5f, 1.5f);
                     break;
 
                 case 3: //Stone Asteroid
-                    SpawnEnemy("assets/SAster96.bmp", spawnX, spawnY, 5, 5, AsteroidMovement(), Enemy::EnemyType::BigStoneAsteroid, 300);
+                    SpawnEnemy("assets/SAster96.bmp", spawnX, spawnY, 5, 5, Enemy::AsteroidMovement(), Enemy::EnemyType::BigStoneAsteroid, 30);
                     m_Enemies.back()->ScaleActor(1.5f, 1.5f);
                     m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
                         {
                             if(type == Enemy::EnemyType::BigStoneAsteroid)
                             {
-                                SpawnEnemy("assets/SAster64.bmp", x - 50.0f, y, 8, 3, AsteroidMovement(), 
-                                    Enemy::EnemyType::MediumStoneAsteroid, 200);
+                                SpawnEnemy("assets/SAster64.bmp", x - 50.0f, y, 8, 3, Enemy::AsteroidMovement(),
+                                    Enemy::EnemyType::MediumStoneAsteroid, 20);
                                 m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
                                     {
                                         if(type == Enemy::EnemyType::MediumStoneAsteroid)
                                         {
-                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, AsteroidMovement(),
-                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
-                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, AsteroidMovement(),
-                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, Enemy::AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 10);
+                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, Enemy::AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 10);
                                         }
                                     });
 
-                                SpawnEnemy("assets/SAster64.bmp", x + 50.0f, y, 8, 3, AsteroidMovement(),
-                                    Enemy::EnemyType::MediumStoneAsteroid, 200);
+                                SpawnEnemy("assets/SAster64.bmp", x + 50.0f, y, 8, 3, Enemy::AsteroidMovement(),
+                                    Enemy::EnemyType::MediumStoneAsteroid, 20);
                                 m_Enemies.back()->SetDeathCallback([this](float x, float y, Enemy::EnemyType type)
                                     {
                                         if (type == Enemy::EnemyType::MediumStoneAsteroid)
                                         {
-                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, AsteroidMovement(),
-                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
-                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, AsteroidMovement(),
-                                                Enemy::EnemyType::SmallStoneAsteroid, 100);
+                                            SpawnEnemy("assets/SAster32.bmp", x - 50.0f, y, 8, 2, Enemy::AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 10);
+                                            SpawnEnemy("assets/SAster32.bmp", x + 50.0f, y, 8, 2, Enemy::AsteroidMovement(),
+                                                Enemy::EnemyType::SmallStoneAsteroid, 10);
                                         }
                                     });
                             }
@@ -336,20 +323,20 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                     break;
 
                 case 4: //Big Metal Asteroid
-                    SpawnEnemy("assets/MAster96.bmp", spawnX, spawnY, 5, 5, AsteroidMovement(), Enemy::EnemyType::BigMetalAsteroid, 9999);
+                    SpawnEnemy("assets/MAster96.bmp", spawnX, spawnY, 5, 5, Enemy::AsteroidMovement(), Enemy::EnemyType::BigMetalAsteroid, 9999);
                     m_Enemies.back()->ScaleActor(1.5f, 1.5f);
                     break;
 
                 case 5: //Medium Metal Asteroid
-                    SpawnEnemy("assets/MAster64.bmp", spawnX, spawnY, 8, 3, AsteroidMovement(), Enemy::EnemyType::MediumMetalAsteroid, 9999);
+                    SpawnEnemy("assets/MAster64.bmp", spawnX, spawnY, 8, 3, Enemy::AsteroidMovement(), Enemy::EnemyType::MediumMetalAsteroid, 9999);
                     break;
 
                 case 6: //Small Metal Asteroid
-                    SpawnEnemy("assets/MAster32.bmp", spawnX, spawnY, 8, 2, AsteroidMovement(), Enemy::EnemyType::SmallMetalAsteroid, 9999);
+                    SpawnEnemy("assets/MAster32.bmp", spawnX, spawnY, 8, 2, Enemy::AsteroidMovement(), Enemy::EnemyType::SmallMetalAsteroid, 9999);
                     break;
             }
-
             m_EnemySpawnTimer = 0.0f;
+
         }
 
         // Update player-specific logic
@@ -404,7 +391,15 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 enemyProjectile->ScaleActor(2.0f, 2.0f);
             }
         }
-
+		//Update all powerups
+        for (auto& powerup : m_PowerUps)
+        {
+            if (powerup)
+            {
+                powerup->UpdatePowerUp(deltaTime);
+                powerup->UpdateActor(deltaTime);
+            }
+		}
 
 		//Remove dead enemies
         m_Enemies.erase(
@@ -435,7 +430,15 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 }),
             m_EnemyProjectiles.end()
         );
-
+		//Remove off-screen or collected powerups
+        m_PowerUps.erase(
+            std::remove_if(m_PowerUps.begin(), m_PowerUps.end(),
+                [this](const std::unique_ptr<PowerUps>& powerup)
+                {
+                    return powerup->IsDead() || powerup->IsOffScreen(m_WindowHeight);
+                }),
+            m_PowerUps.end()
+		);
     }
 
     void GameLevel::Render()
@@ -475,6 +478,15 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 enemyProjectile->Render(m_SpriteRenderer);
             }
         }
+
+		//Render all powerups
+        for (const auto& powerup : m_PowerUps)
+        {
+            if (powerup)
+            {
+                powerup->Render(m_SpriteRenderer);
+            }
+		}
 
         // Render all letters (text)
         for (auto* letter : m_Letters)

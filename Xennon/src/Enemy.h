@@ -79,6 +79,12 @@ public:
 
 	EnemyType GetEnemyType() const { return m_EnemyType; }
 
+	static std::function<void(Enemy*, float)> LonerMovement();
+	static std::function<void(Enemy*, float)> RusherMovement();
+	static std::function<void(Enemy*, float)> DroneMovement();
+	static std::function<void(Enemy*, float)> AsteroidMovement();
+
+
 private:
 
 	int health = 100;

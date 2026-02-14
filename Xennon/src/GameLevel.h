@@ -10,6 +10,7 @@
 #include "Projectile.h"
 #include "Enemy.h"
 #include "EnemyProjectile.h"
+#include "PowerUps.h"
 #include <memory>  
 #include <optional>
 #include <functional>
@@ -31,16 +32,12 @@
             std::function<void(Enemy*, float)> movementDirection, Enemy::EnemyType type, int health);
 
 		void SpawnPlayer(float x, float y);
-		void SpawnProjectile(float x, float y);
+		void SpawnProjectile(float x, float y, int damage);
         void SpawnEnemyProjectile(float x, float y, float targetX, float targetY);
+		void SpawnPowerUp(const char* texturePath, float x, float y, int cols, int rows, PowerUps::PowerUpType type);
 
         void AddBackground();
         void ClearAllActors();
-
-        std::function<void(Enemy*, float)> LonerMovement();
-        std::function<void(Enemy*, float)> RusherMovement();
-        std::function<void(Enemy*, float)> DroneMovement();
-        std::function<void(Enemy*, float)> AsteroidMovement();
 
     private:
 
@@ -57,11 +54,14 @@
 
         float m_EnemySpawnTimer;
         float m_EnemySpawnInterval;
+		float m_PowerUpSpawnTimer;
+		float m_PowerUpSpawnInterval;
 
         std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
         std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
 		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
         std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemie projectiles
+		std::vector<std::unique_ptr<PowerUps>> m_PowerUps;// All powerups in the level
 
         Mechanism::Window& m_Window;
         std::vector<Mechanism::Actor*> m_Letters;

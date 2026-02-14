@@ -21,7 +21,8 @@ namespace Mechanism
             Enemy,
             Projectile,
             Background,
-            EnemyProjectile
+            EnemyProjectile,
+			PowerUp
         };
 
         Actor(void* renderer, const char* texturePath, float x, float y,

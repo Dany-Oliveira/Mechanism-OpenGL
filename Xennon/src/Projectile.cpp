@@ -2,15 +2,15 @@
 #include <iostream>
 
 
-Projectile::Projectile(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex)
-	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityY(-400.0f)
+Projectile::Projectile(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex, int damage)
+	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityY(-400.0f), m_Damage(damage)
 {
-		std::cout << "Projectile created\n";
+		
 }
 
 Projectile::~Projectile()
 {
-		std::cout << "Projectile destroyed\n";
+		
 }
 
 void Projectile::UpdateProjectile(float deltaTime)
@@ -31,7 +31,6 @@ void Projectile::OnCollisionBegin(Mechanism::Actor* other)
 {
 	if(other && other->GetCollisionTag()==Mechanism::Actor::CollisionTag::Enemy)
 	{
-		printf("Projectile collided with an enemy!\n");
 		SetIsDead(true);
 	}
 }

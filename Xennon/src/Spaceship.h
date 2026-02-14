@@ -1,5 +1,7 @@
  #pragma once
 #include "Mechanism/Pawn.h"
+#include "Mechanism/HealthBar.h"
+
 #include <functional>
 
 class Spaceship : public Mechanism::Pawn
@@ -14,16 +16,35 @@ public:
 
 	void Shoot();
 
-	void SetShootCallback(const std::function<void(float, float)>& callback)
+	void SetShootCallback(const std::function<void(float, float, int)>& callback)
 	{
 		m_ShootCallback = callback;
 	}
 
+	void TakeDamage(int damage);
+	void OnCollisionBegin(Mechanism::Actor* other) override;
+
+	void ApplyShieldPowerUp();
+	void ApplyWeaponPowerUp();
+
+	void SetShootCooldownTime(float time) { m_ShootCooldownTime = time; }
+	float GetShootCooldownTime() const { return m_ShootCooldownTime; }
+
+	int GetCurrentHealth() const { return m_CurrentHealth; }
+	int GetMaxHealth() const { return m_MaxHealth; }
+
 private:
+
+	int m_MaxHealth;
+	int m_CurrentHealth;
+	int m_ProjectileDamage;
+	int m_WeaponPowerUpLevel;
 
 	float m_ShootCooldown; 
 	float m_ShootCooldownTime;
-	std::function<void(float, float)> m_ShootCallback;
+	std::function<void(float, float, int)> m_ShootCallback;
+
+
 
 };
 

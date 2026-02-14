@@ -11,7 +11,7 @@
 namespace Mechanism
 {
 
-	Mechanism::SpriteRenderer::SpriteRenderer() : m_VAO(0), m_VBO(0), m_ShaderProgram(0), m_ScreenWidth(1280), m_ScreenHeight(720)
+	Mechanism::SpriteRenderer::SpriteRenderer() : m_VAO(0), m_VBO(0), m_ShaderProgram(0), m_ScreenWidth(1600), m_ScreenHeight(900)
 	{
 	}
 

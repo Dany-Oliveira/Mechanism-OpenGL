@@ -3,10 +3,12 @@
 #include <iostream>
 
 Spaceship::Spaceship(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex) :
-	Pawn(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), m_ShootCooldown(0.0f), m_ShootCooldownTime(0.2f)
+	Pawn(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), 
+	m_ShootCooldown(0.0f), m_ShootCooldownTime(0.2f), m_MaxHealth(10), m_CurrentHealth(10), m_ProjectileDamage(5), m_WeaponPowerUpLevel(0)
 {
 	SetSpeed(5.0f); // Set a default speed for the spaceship
-	std::cout << "Spaceship created\n";
+
+	
 }
 
 Spaceship::~Spaceship()
@@ -75,11 +77,60 @@ void Spaceship::Shoot()
 	{
 		float bulletX = GetX() + (GetFrameWidth() / 2.0f) - 15.0f; // Center bullet horizontally
 		float bulletY = GetY() - 30.0f; // Position bullet above the spaceship
+		int damage = m_ProjectileDamage;
 
-		m_ShootCallback(bulletX, bulletY);
-		std::cout << "Spaceship shot a projectile from (" << bulletX << ", " << bulletY << ")\n";
+		m_ShootCallback(bulletX, bulletY, damage);
 	}
 }
+
+void Spaceship::OnCollisionBegin(Mechanism::Actor* other)
+{
+	if(other->GetCollisionTag() == Mechanism::Actor::CollisionTag::EnemyProjectile)
+	{
+		TakeDamage(1); // Take damage from enemy projectile
+	}
+	else if(other->GetCollisionTag() == Mechanism::Actor::CollisionTag::Enemy)
+	{
+		TakeDamage(2); // Take damage from enemy collisions
+	}
+}
+
+void Spaceship::TakeDamage(int damage)
+{
+	m_CurrentHealth -= damage;
+
+	if(m_CurrentHealth < 0)
+	{
+		m_CurrentHealth = 0;
+	}
+
+	printf("Player took %d damage! Health: %d/%d\n", damage, m_CurrentHealth, m_MaxHealth);
+
+	if (m_CurrentHealth <= 0)
+	{
+		printf("Player died!\n");
+		SetIsDead(true);	
+	}
+}
+
+void Spaceship::ApplyShieldPowerUp()
+{
+	m_CurrentHealth = m_MaxHealth;
+	printf("Shield power-up! Health restored to %d\n", m_MaxHealth);
+}
+
+void Spaceship::ApplyWeaponPowerUp()
+{
+	if(m_WeaponPowerUpLevel >= 2)
+	{
+		printf("Weapon power-up already at max level!\n");
+		return;
+	}
+	m_ProjectileDamage *= 2; // Double the projectile damage
+	++m_WeaponPowerUpLevel;
+}
+
+
 
 
 

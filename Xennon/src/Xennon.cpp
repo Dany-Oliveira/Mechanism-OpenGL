@@ -8,7 +8,7 @@ class Xennon : public Mechanism::Application
 
 		Xennon() : m_CurrentLevel(nullptr)
 		{
-			printf("Test App created\n");
+			printf("Xennon App created\n");
 
 			auto& window = GetWindow();
 			printf("Window size: %d x %d\n", window.GetWidth(), window.GetHeight());
