@@ -1,9 +1,3 @@
-# 🎮 Xennon Game Engine - Class Diagram
-
-This document provides a comprehensive UML class diagram for the game engine architecture.
-
-## 📊 Architecture Overview
-
 ```mermaid
 classDiagram
     %% ===== CORE ENGINE CLASSES =====
@@ -309,92 +303,8 @@ classDiagram
     PowerUps ..> PowerUpType : uses
     Box2DWorld ..> Actor : collision callbacks
     GameLevel ..> Box2DWorld : uses
-```
 
----
 
-## 🏗️ Architecture Layers
-
-### **1. Engine Core Layer**
-- **Application**: Abstract base class for all applications
-- **Window**: Manages SDL window, OpenGL context, and input
-- **SpriteRenderer**: Handles all 2D sprite rendering using OpenGL
-- **Texture**: Loads and manages BMP textures
-
-### **2. Physics Layer**
-- **Box2DWorld**: Wraps Box2D physics world and handles collision callbacks
-- **Box2DBody**: Wraps Box2D rigid bodies with dynamic/static support
-
-### **3. Entity Layer**
-- **Actor**: Base class for all game entities (rendering, animation, physics)
-- **Pawn**: Extends Actor with movement capabilities
-- **Spaceship**: Player-controlled ship
-- **Enemy**: AI-controlled enemies with multiple movement patterns
-- **Projectile**: Player projectiles with damage system
-- **EnemyProjectile**: Enemy projectiles that target the player
-- **PowerUps**: Collectible items that enhance player abilities
-
-### **4. Game Layer**
-- **Level**: Abstract level system with physics integration
-- **GameLevel**: Concrete implementation managing all game entities
-- **Xennon**: Main application class
-
-### **5. UI Layer**
-- **HealthBar**: Visual health indicator
-- **Input**: Static input system for keyboard handling
-
----
-
-## 🔗 Key Design Patterns Used
-
-### **Composition Over Inheritance**
-- Actors compose `Texture` and `Box2DBody` rather than inheriting from them
-- Flexible design allowing entities to have physics or not
-
-### **Callback Pattern**
-- Enemies use movement pattern callbacks (`LonerMovement()`, `RusherMovement()`, etc.)
-- Projectiles use explosion callbacks
-- PowerUps use effect callbacks
-- Spaceship uses shooting callbacks
-
-### **Factory Pattern**
-- `GameLevel` acts as a factory for spawning all entity types
-- Centralized entity creation with proper initialization
-
-### **Observer Pattern**
-- `Box2DWorld` uses callbacks to notify actors of collisions
-- Decoupled collision handling
-
-### **Template Method Pattern**
-- `Application` defines the game loop structure
-- Subclasses (`Xennon`) implement specific behavior
-
----
-
-## 📊 Entity Relationship Summary
-
-| Relationship | Description |
-|--------------|-------------|
-| **Inheritance** | Spaceship & Enemy inherit from Pawn |
-| **Composition** | Actor contains Texture and Box2DBody |
-| **Aggregation** | GameLevel manages collections of entities |
-| **Dependency** | SpriteRenderer uses Texture for rendering |
-
----
-
-## 🎯 Key Features
-
-- ✅ **Fixed Timestep Physics**: 60 FPS physics with variable rendering
-- ✅ **Entity Component System**: Flexible actor-based architecture
-- ✅ **Collision Detection**: Box2D integration with tag-based filtering
-- ✅ **Animation System**: Spritesheet-based with frame control
-- ✅ **Power-Up System**: Callback-based effects
-- ✅ **Spawning System**: Factory methods in GameLevel
-- ✅ **Visual Effects**: Explosion animations with auto-cleanup
-
----
-
-## 📝 Notes
 
 - All physics bodies are synchronized with visual positions every frame
 - Actors can exist without physics bodies (e.g., background, UI elements)
