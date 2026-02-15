@@ -31,6 +31,10 @@ void Projectile::OnCollisionBegin(Mechanism::Actor* other)
 {
 	if(other && other->GetCollisionTag()==Mechanism::Actor::CollisionTag::Enemy)
 	{
+		if (m_ExplosionCallback)
+		{
+			m_ExplosionCallback(GetX(), GetY());
+		}
 		SetIsDead(true);
 	}
 }

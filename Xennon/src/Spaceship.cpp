@@ -126,7 +126,7 @@ void Spaceship::ApplyWeaponPowerUp()
 		printf("Weapon power-up already at max level!\n");
 		return;
 	}
-	m_ProjectileDamage *= 2; // Double the projectile damage
+	m_ProjectileDamage *= 2; 
 	++m_WeaponPowerUpLevel;
 }
 

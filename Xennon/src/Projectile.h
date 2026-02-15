@@ -1,6 +1,6 @@
 #pragma once
 #include "Mechanism/Actor.h"
-
+#include <functional>
 
 class Projectile : public Mechanism::Actor
 {
@@ -17,9 +17,16 @@ public:
 
 	int GetDamage() const { return m_Damage; }
 
+	
+	void SetExplosionCallback(std::function<void(float, float)> callback)
+	{
+		m_ExplosionCallback = callback;
+	}
+
 private:
 
 	float velocityY;
 	int m_Damage;
+	std::function<void(float, float)> m_ExplosionCallback;
 };
 

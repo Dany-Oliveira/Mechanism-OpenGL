@@ -58,6 +58,12 @@ namespace Mechanism
         void SetCollisionTag(CollisionTag tag){ m_CollisionTag = tag; }
         CollisionTag GetCollisionTag() const { return m_CollisionTag; }
 
+        void SetAnimationEnabled(bool enabled) { m_AnimationEnabled = enabled; }
+        bool IsAnimationEnabled() const { return m_AnimationEnabled; }
+
+        void SetPlayOnce(bool playOnce) { m_PlayOnce = playOnce; }  
+        int GetFrameIndex() const { return m_CurrentFrame; }
+
 		virtual void OnCollisionBegin(Actor* other) {}
 
         void SetIsDead(bool dead) { isDead = dead; }
@@ -92,6 +98,8 @@ namespace Mechanism
 		float m_AnimationTimer; //time since last frame change
         float m_FrameDuration; //FPS
         int m_TotalFrames;   
+		bool m_AnimationEnabled = true;
+		bool m_PlayOnce = false;
 
 		Box2DBody m_Box2DBody;
 		CollisionTag m_CollisionTag = CollisionTag::None;

@@ -35,6 +35,8 @@
 		void SpawnProjectile(float x, float y, int damage);
         void SpawnEnemyProjectile(float x, float y, float targetX, float targetY);
 		void SpawnPowerUp(const char* texturePath, float x, float y, int cols, int rows, PowerUps::PowerUpType type);
+		void SpawnExplosion(float x, float y);
+
 
         void AddBackground();
         void ClearAllActors();
@@ -62,6 +64,7 @@
 		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
         std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemie projectiles
 		std::vector<std::unique_ptr<PowerUps>> m_PowerUps;// All powerups in the level
+		std::vector<std::unique_ptr<Mechanism::Actor>> m_Effects;// All effects in the level
 
         Mechanism::Window& m_Window;
         std::vector<Mechanism::Actor*> m_Letters;

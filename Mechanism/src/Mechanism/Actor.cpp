@@ -36,13 +36,6 @@ namespace Mechanism
 
 		// Total frames
         m_TotalFrames = m_GridColumns * m_GridRows;
-
-        std::cout << "\nActor loaded: " << texturePath << std::endl;
-        std::cout << "  Texture: " << m_TextureWidth << "x" << m_TextureHeight << std::endl;
-        std::cout << "  Grid: " << m_GridColumns << " columns x " << m_GridRows << " rows" << std::endl;
-        std::cout << "  Frame size: " << m_FrameWidth << "x" << m_FrameHeight << std::endl;
-        std::cout << "  Total frames: " << m_TotalFrames << std::endl;
-
     }
 
     Actor::~Actor()
@@ -56,7 +49,8 @@ namespace Mechanism
 		// Sync physics position to visual position
 		SyncPhysicsToVisual();
 
-        if (m_TotalFrames <= 1)
+
+        if (!m_AnimationEnabled || m_TotalFrames <= 1)
             return;
 
         // Count time
@@ -70,7 +64,17 @@ namespace Mechanism
             ++m_CurrentFrame;
 
             if (m_CurrentFrame >= m_TotalFrames)
+            {
+                if(m_PlayOnce)
+                {
+                    SetIsDead(true);
+                    return;
+                }
+				else
+
                 m_CurrentFrame = 0;  // loop back to start
+            }
+               
         }
     }
 

@@ -139,6 +139,17 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
 		m_PowerUps.push_back(std::move(powerup));
     }
+
+    void GameLevel::SpawnExplosion(float x, float y)
+    {
+		auto explosion = std::make_unique<Mechanism::Actor>(m_NativeWindow, "assets/explode16.bmp", x, y, 5, 2, 0);
+
+		explosion->SetAnimationSpeed(20.0f);
+		explosion->SetPlayOnce(true);
+		explosion->ScaleActor(1.5f, 1.5f);  
+
+		m_Effects.push_back(std::move(explosion));
+    }
     
 
     void GameLevel::SpawnPlayer(float xPos, float yPos)
@@ -165,16 +176,23 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
     void GameLevel::SpawnProjectile(float x, float y, int damage)
     {
-		auto projectile = std::make_unique<Projectile>(m_NativeWindow, "assets/missile.bmp", x, y, 1, 1, 0, damage);
+		auto projectile = std::make_unique<Projectile>(m_NativeWindow, "assets/missile.bmp", x, y, 1, 3, 0, damage);
 
-		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); //Create physics body for projectile
-		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); //Set collision tag to indentify as projectile
+		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); 
+		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); 
+
+		projectile->SetAnimationEnabled(false); 
+
+        projectile->SetExplosionCallback([this](float x, float y) {
+            SpawnExplosion(x, y);  
+            });
 
 		m_Projectiles.push_back(std::move(projectile));
     }
 
 
-    void GameLevel::SpawnEnemyProjectile(float x, float y, float targetX, float targetY)
+    void GameLevel::SpawnEnemyProjectile(float x, float y, 
+        float targetX, float targetY)
     {
         auto projectile = std::make_unique<EnemyProjectile>(m_NativeWindow, "assets/EnWeap6.bmp",
             x, y, targetX, targetY, 8, 1, 0);
@@ -401,6 +419,12 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             }
 		}
 
+        // Update effects
+        for (auto& effect : m_Effects)
+        {
+            if (effect) effect->UpdateActor(deltaTime);
+        }
+
 		//Remove dead enemies
         m_Enemies.erase(
             std::remove_if(m_Enemies.begin(), m_Enemies.end(),
@@ -430,6 +454,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 }),
             m_EnemyProjectiles.end()
         );
+
 		//Remove off-screen or collected powerups
         m_PowerUps.erase(
             std::remove_if(m_PowerUps.begin(), m_PowerUps.end(),
@@ -439,6 +464,15 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 }),
             m_PowerUps.end()
 		);
+
+        // Remove effects mortos
+        m_Effects.erase(
+            std::remove_if(m_Effects.begin(), m_Effects.end(),
+                [](const std::unique_ptr<Mechanism::Actor>& effect) {
+                    return effect->IsDead();
+                }),
+            m_Effects.end()
+        );
     }
 
     void GameLevel::Render()
@@ -496,6 +530,13 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 letter->Render(m_SpriteRenderer);
             }
         }
+
+        // Render effects   
+        for (const auto& effect : m_Effects)
+        {
+            if (effect) effect->Render(m_SpriteRenderer);
+        }
+
 
         if (m_HealthBar)
         {
