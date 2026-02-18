@@ -22,7 +22,7 @@ GameLevel::GameLevel(Mechanism::Window& window) :
 
 		AddBackground();
           
-		SpawnPlayer(m_WindowWidth / 2.0f, m_WindowHeight - 100.0f);// Spawn player near bottom center
+		SpawnPlayer(100.0f, m_WindowHeight / 2.0f);// Spawn player near bottom center
 
         
         //Mudar a posicao da barra
@@ -160,6 +160,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 		player->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for player
 		player->SetCollisionTag(Mechanism::Actor::CollisionTag::Player); //Set collision tag to indentify as player
 		player->SetSpeed(5.0f); // Set player speed
+		player->SetRotation(90.0f); 
 
 		// Set up shooting callback
         player->SetShootCallback([this](float x, float y, int damage)
@@ -180,7 +181,8 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 
 		projectile->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, true); 
 		projectile->SetCollisionTag(Mechanism::Actor::CollisionTag::Projectile); 
-
+        projectile->SetRotation(90.0f);
+		projectile->ScaleActor(1.5f, 1.5f);
 		projectile->SetAnimationEnabled(false); 
 
         projectile->SetExplosionCallback([this](float x, float y) {
@@ -237,8 +239,8 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
         m_PowerUpSpawnTimer += deltaTime;
         if(m_PowerUpSpawnTimer >= m_PowerUpSpawnInterval)
         {
-            float spawnX = (std::rand() % (m_WindowWidth - 100)) + 50.0f;
-            float spawnY = 50.0f;
+            float spawnX = m_WindowWidth + 50.0f;
+            float spawnY = (std::rand() % (m_WindowHeight - 100)) + 50.0f;
             int randomType = std::rand() % 2;
             switch(randomType)
             {
@@ -275,8 +277,8 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             //Pick a random enemie type 
             int randomType = std::rand() % 7;
 
-            float spawnX = (std::rand() % (m_WindowWidth - 100)) + 50.0f;
-            float spawnY = 50.0f;
+            float spawnX = m_WindowWidth + 50.0f;
+            float spawnY = (std::rand() % (m_WindowHeight - 100)) + 50.0f;
 
             switch(randomType)
             {
@@ -286,6 +288,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                     movement fucntion, Enemy Type(Enum class), Health */
                     SpawnEnemy("assets/LonerA.bmp", spawnX, spawnY, 4, 4, Enemy::LonerMovement(), Enemy::EnemyType::Loner, 15);
 
+                    m_Enemies.back()->SetScreenBounds(50.0f, m_WindowHeight - 50.0f);
                     //this enemy starts shooting
                     m_Enemies.back()->SetCanShoot(true);
                     m_Enemies.back()->SetShootInterval(2.0f);
@@ -296,7 +299,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                     break;
 
                 case 1:  // Rusher
-                    SpawnEnemy("assets/rusher.bmp", spawnX, spawnY, 6, 4, Enemy::RusherMovement(), Enemy::EnemyType::Rusher, 10);
+                    SpawnEnemy("assets/rusher.bmp", spawnX, spawnY, 4, 6, Enemy::RusherMovement(), Enemy::EnemyType::Rusher, 10);
                     break;
 
                 case 2:  // Drone
@@ -430,7 +433,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             std::remove_if(m_Enemies.begin(), m_Enemies.end(),
                 [](const std::unique_ptr<Enemy>& enemy)
                 {
-                    return enemy->IsDead();
+                    return enemy->IsDead() || enemy->GetX() < -200.0f;
                 }),
             m_Enemies.end()
 		);
@@ -440,7 +443,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             std::remove_if(m_Projectiles.begin(), m_Projectiles.end(),
                 [this](const std::unique_ptr<Projectile>& proj)
                 {
-                    return proj->IsDead() || proj->IsOffScreen(m_WindowHeight); 
+                    return proj->IsDead() || proj->IsOffScreen(m_WindowWidth); 
                 }),
             m_Projectiles.end()
 		);
@@ -450,7 +453,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             std::remove_if(m_EnemyProjectiles.begin(), m_EnemyProjectiles.end(),
                 [this](const std::unique_ptr<EnemyProjectile>& proj)
                 {
-                    return proj->IsDead() || proj->IsOffScreen(m_WindowHeight);
+                    return proj->IsDead() || proj->IsOffScreen(m_WindowWidth);
                 }),
             m_EnemyProjectiles.end()
         );
@@ -460,7 +463,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             std::remove_if(m_PowerUps.begin(), m_PowerUps.end(),
                 [this](const std::unique_ptr<PowerUps>& powerup)
                 {
-                    return powerup->IsDead() || powerup->IsOffScreen(m_WindowHeight);
+                    return powerup->IsDead() || powerup->IsOffScreen(m_WindowWidth);
                 }),
             m_PowerUps.end()
 		);

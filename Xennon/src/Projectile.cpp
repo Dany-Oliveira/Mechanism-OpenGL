@@ -3,7 +3,7 @@
 
 
 Projectile::Projectile(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex, int damage)
-	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityY(-400.0f), m_Damage(damage)
+	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityX(400.0f), m_Damage(damage)
 {
 		
 }
@@ -17,14 +17,14 @@ void Projectile::UpdateProjectile(float deltaTime)
 {
 	if(HasPhysicsBody())
 	{
-		// Move the projectile upwards at a constant speed
-		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f); // Divided by 100 to convert to Box2D units meters/second
+		// Move the projectile to the right at a constant speed
+		GetPhysicsBody().SetLinearVelocity(velocityX / 100.0f, 0.0f); // Divided by 100 to convert to Box2D units meters/second
 	}
 }
 
-bool Projectile::IsOffScreen(float screenHeight) const
+bool Projectile::IsOffScreen(float screenWidth) const
 {
-	return GetY() < -50.0f || GetY() > screenHeight + 50.0f;
+	return GetX() > screenWidth + 50.0f || GetX() < -50.0f;
 }
 
 void Projectile::OnCollisionBegin(Mechanism::Actor* other)

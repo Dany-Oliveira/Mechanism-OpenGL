@@ -97,8 +97,9 @@ namespace Mechanism
 		// Set texture parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		// Upload texture data to GPU
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height,
@@ -109,9 +110,6 @@ namespace Mechanism
 
 		// Unbind texture
 		glBindTexture(GL_TEXTURE_2D, 0);
-
-		std::cout << "OpenGL Texture loaded: " << filepath << " (ID: " << m_TextureID << ")\n";
-		std::cout << "  Size: " << m_Width << "x" << m_Height << std::endl;
 	}
 
 	void Texture::Bind(unsigned int slot) const

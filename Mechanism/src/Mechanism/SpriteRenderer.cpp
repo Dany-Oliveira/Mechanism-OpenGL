@@ -36,9 +36,9 @@ namespace Mechanism
 		m_ScreenWidth = screenWidth;
 		m_ScreenHeight = screenHeight;
 
-		CreateShader();
-		CreateQuad();
-		UpdateProjection(screenWidth, screenHeight);
+		CreateShader(); // Load and compile shaders from files
+		CreateQuad(); // Create VAO/VBO for a unit quad
+		UpdateProjection(screenWidth, screenHeight); // Set initial projection matrix
 
 		std::cout << "Sprite Renderer initialized\n";
 	}
@@ -48,17 +48,18 @@ namespace Mechanism
 		m_ScreenWidth = screenWidth;
 		m_ScreenHeight = screenHeight;
 
-		// Create orthographic projection (0,0 at top-left, matches SDL coordinate system)
+		// Create orthographic projection
 		glm::mat4 projection = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, -1.0f, 1.0f);
 
 		glUseProgram(m_ShaderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(m_ShaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	}
 
+	
 	void SpriteRenderer::DrawSprite(const Texture* texture,
 		float x, float y, float width, float height,
 		int frameX, int frameY, int frameWidth, int frameHeight,
-		int textureWidth, int textureHeight)
+		int textureWidth, int textureHeight, float rotation)
 	{
 		if (!texture || !texture->isValid())
 			return;
@@ -70,6 +71,9 @@ namespace Mechanism
 		// Create model matrix (position and scale)
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(x, y, 0.0f));
+		model = glm::translate(model, glm::vec3(width * 0.5f, height * 0.5f, 0.0f));   
+		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, glm::vec3(-width * 0.5f, -height * 0.5f, 0.0f));  
 		model = glm::scale(model, glm::vec3(width, height, 1.0f));
 
 		glUniformMatrix4fv(glGetUniformLocation(m_ShaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -81,6 +85,7 @@ namespace Mechanism
 		// Bind texture
 		texture->Bind(0);
 		glUniform1i(glGetUniformLocation(m_ShaderProgram, "texture1"), 0);
+
 
 		// Calculate texture coordinates for the specific frame
 		float texLeft = (float)frameX / (float)textureWidth;

@@ -11,7 +11,7 @@ public:
 	
 	void UpdateProjectile(float deltaTime);
 
-	bool IsOffScreen(float screenHeight) const;
+	bool IsOffScreen(float screenWidth) const;
 
 	void OnCollisionBegin(Mechanism::Actor* other) override;
 
@@ -25,7 +25,7 @@ public:
 
 private:
 
-	float velocityY;
+	float velocityX;
 	int m_Damage;
 	std::function<void(float, float)> m_ExplosionCallback;
 };

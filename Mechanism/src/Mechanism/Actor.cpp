@@ -9,7 +9,7 @@ namespace Mechanism
     Actor::Actor(void* renderer, const char* texturePath, float x, float y, int gridColumns, int gridRows, int frameIndex)
         : m_X(x), m_Y(y), m_ScaleX(1.0f), m_ScaleY(1.0f), m_GridColumns(gridColumns), m_GridRows(gridRows)
         , m_CurrentFrame(frameIndex), m_TextureWidth(0), m_TextureHeight(0), m_FrameWidth(0), m_FrameHeight(0), m_AnimationTimer(0)
-        , m_FrameDuration(0.1), m_TotalFrames(0)
+        , m_FrameDuration(0.1), m_TotalFrames(0), m_Rotation(0.0f)
     {
 
         if (!renderer)
@@ -104,7 +104,8 @@ namespace Mechanism
             renderWidth, renderHeight,
             col * m_FrameWidth, row * m_FrameHeight,
             m_FrameWidth, m_FrameHeight,
-            m_TextureWidth, m_TextureHeight
+            m_TextureWidth, m_TextureHeight,
+            m_Rotation
         );
     }
 

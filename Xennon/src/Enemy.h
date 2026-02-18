@@ -41,6 +41,8 @@ public:
 	float GetStartX() const { return startX; }
 	float GetStartY() const { return startY; }
 
+	bool IsOffScreen(float screenWidth) const;
+
 	void SetMovementPattern(std::function<void(Enemy*, float)> pattern)
 	{
 		m_MovementPattern = pattern;
@@ -77,6 +79,17 @@ public:
 		m_EnemyType = type;
 	}
 
+	void SetScreenBounds(float top, float bottom)
+	{
+		m_ScreenTop = top;
+		m_ScreenBottom = bottom;
+	}
+
+	float GetScreenTop() const { return m_ScreenTop; }
+	float GetScreenBottom() const { return m_ScreenBottom; }
+	float GetDirectionY() const { return m_DirectionY; }
+	void SetDirectionY(float dir) { m_DirectionY = dir; }
+
 	EnemyType GetEnemyType() const { return m_EnemyType; }
 
 	static std::function<void(Enemy*, float)> LonerMovement();
@@ -94,6 +107,10 @@ private:
 	float timeAlive = 0.0f; //Time since spawned
 	float startX = 0.0f; //Initial x spawn position
 	float startY = 0.0f; //Initial y spawn position
+
+	float m_ScreenTop = 0.0f;
+	float m_ScreenBottom = 0.0f;
+	float m_DirectionY = 1.0f;
 
 	bool m_CanShoot = false;
 	float m_ShootCooldown = 2.0f;

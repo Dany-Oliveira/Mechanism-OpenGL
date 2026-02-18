@@ -75,8 +75,8 @@ void Spaceship::Shoot()
 {
 	if(m_ShootCallback)
 	{
-		float bulletX = GetX() + (GetFrameWidth() / 2.0f) - 15.0f; // Center bullet horizontally
-		float bulletY = GetY() - 30.0f; // Position bullet above the spaceship
+		float bulletX = GetX() + GetFrameWidth(); 
+		float bulletY = GetY() + (GetFrameWidth() / 2.0f); 
 		int damage = m_ProjectileDamage;
 
 		m_ShootCallback(bulletX, bulletY, damage);

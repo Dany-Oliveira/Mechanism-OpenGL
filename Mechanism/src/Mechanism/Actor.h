@@ -35,6 +35,9 @@ namespace Mechanism
 
 		void ScaleActor(float scaleX, float scaleY);
 
+        void SetRotation(float degrees) { m_Rotation = degrees; }
+		float GetRotation() const { return m_Rotation; }
+        
         void SetFrameIndex(int index);
         void SetAnimationSpeed(float fps){ m_FrameDuration = 1.0f / fps; }
 
@@ -83,6 +86,8 @@ namespace Mechanism
 		// Scale factors
 		float m_ScaleX = 1.0f;
 		float m_ScaleY = 1.0f;
+
+		float m_Rotation = 0.0f; // Rotation in degrees
 
         // Grid info
         int m_GridColumns;     // How many sprites across

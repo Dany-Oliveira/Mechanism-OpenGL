@@ -30,7 +30,7 @@ public:
 
 private:
 
-	float velocityY;
+	float velocityX;
 
 	std::function<void(PowerUpType)> m_EffectCallback;
 

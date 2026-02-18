@@ -13,7 +13,7 @@ public:
 
 	void UpdateEnemyProjectile(float deltaTime);
 
-	bool IsOffScreen(float screenHeight) const;
+	bool IsOffScreen(float screenWidth) const;
 
 	void OnCollisionBegin(Mechanism::Actor* other) override;
  

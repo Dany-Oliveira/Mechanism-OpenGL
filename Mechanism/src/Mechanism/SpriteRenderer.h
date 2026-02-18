@@ -23,7 +23,7 @@ namespace Mechanism
 			float x, float y, float width, float height,
 			int frameX, int frameY,
 			int frameWidth, int frameHeight,
-			int textureWidth, int textureHeight);
+			int textureWidth, int textureHeight, float rotation = 0.0f);
 
 		//For the HealthBar
 		void DrawColoredRectangle(float x, float y, float width, float height, 

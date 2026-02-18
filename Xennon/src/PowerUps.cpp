@@ -2,7 +2,7 @@
 
 PowerUps::PowerUps(void* renderer, const char* texturePath, float x, float y, 
 	int gridColumns, int gridRows, PowerUpType type, int frameIndex)
-	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityY(100.0f), m_PowerUpType(type)
+	: Actor(renderer, texturePath, x, y, gridColumns, gridRows, frameIndex), velocityX(-100.0f), m_PowerUpType(type)
 {
 
 }
@@ -15,7 +15,7 @@ void PowerUps::UpdatePowerUp(float deltaTime)
 {
 	if(HasPhysicsBody())
 	{
-		GetPhysicsBody().SetLinearVelocity(0.0f, velocityY / 100.0f); // Divided by 100 to convert to Box2D units meters/second
+		GetPhysicsBody().SetLinearVelocity(velocityX / 100.0f, 0.0f); // Divided by 100 to convert to Box2D units meters/second
 	}
 }
 
@@ -26,6 +26,11 @@ bool PowerUps::IsOffScreen(float screenHeight) const
 
 void PowerUps::OnCollisionBegin(Mechanism::Actor* other)
 {
+	if (other->GetCollisionTag() == Mechanism::Actor::CollisionTag::Projectile)
+	{
+		return;  
+	}
+
 	if (other && other->GetCollisionTag() == Mechanism::Actor::CollisionTag::Player)
 	{
 		if(m_EffectCallback)

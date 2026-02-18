@@ -38,9 +38,9 @@ void EnemyProjectile::UpdateEnemyProjectile(float deltaTime)
 	}
 }
 
-bool EnemyProjectile::IsOffScreen(float screenHeight) const
+bool EnemyProjectile::IsOffScreen(float screenWidth) const
 {
-	return GetY() < -50.0f || GetY() > screenHeight + 50.0f;
+	return GetX() < -50.0f || GetX() > screenWidth + 50.0f;
 }
 
 void EnemyProjectile::OnCollisionBegin(Mechanism::Actor* other)
