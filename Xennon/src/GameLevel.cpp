@@ -277,7 +277,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             //Pick a random enemie type 
             int randomType = std::rand() % 7;
 
-            float spawnX = m_WindowWidth + 50.0f;
+            float spawnX = m_WindowWidth - 100.0f;
             float spawnY = (std::rand() % (m_WindowHeight - 100)) + 50.0f;
 
             switch(randomType)
