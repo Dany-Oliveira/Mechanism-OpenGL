@@ -116,7 +116,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
     void GameLevel::SpawnEnemy(const char* texturePath, float xPos, float yPos, int cols, int rows,
         std::function<void(Enemy*, float)> movementPattern, Enemy::EnemyType type, int health)
     {
-        // x   y  col row 0=its the srite in the col0 row0, the first sprite
+        // x   y  col row 0=its the srite in the col0 row0, the first sprite   
         auto enemy = std::make_unique<Enemy>(m_NativeWindow, texturePath, xPos, yPos, cols, rows, 0);
 
 		enemy->CreatePhysicsBody(GetBox2DWorld().GetWorldId(), true, false); //Create physics body for enemy
@@ -138,6 +138,31 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
 		powerup->SetCollisionTag(Mechanism::Actor::CollisionTag::PowerUp);
 
 		m_PowerUps.push_back(std::move(powerup));
+    }
+
+    void GameLevel::SpawnCompanion(float x, float y)
+    {
+        switch (m_CompanionCount)
+        {
+            case 0:
+                x = m_Player->GetX();
+				y = m_Player->GetY() + 100.0f; 
+				printf("Spawning companion at (%.0f, %.0f)\n", x, y);
+			    break;    
+            case 1:
+                x = m_Player->GetX();
+                y = m_Player->GetY() - 100.0f;
+				printf("Spawning companion at (%.0f, %.0f)\n", x, y);
+                break;
+			case 2:
+                printf("Maximum companions reached, cannot spawn more!\n");
+				return; // Max 2 companions, do not spawn more			
+                break;
+        }
+		++m_CompanionCount;
+        auto companion = std::make_unique<Mechanism::Actor>(m_NativeWindow, "assets/clone.bmp", x, y, 4, 5, 0);
+		companion->SetRotation(90.0f);
+        m_Companions.push_back(std::move(companion));     
     }
 
     void GameLevel::SpawnExplosion(float x, float y)
@@ -241,7 +266,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
         {
             float spawnX = m_WindowWidth + 50.0f;
             float spawnY = (std::rand() % (m_WindowHeight - 100)) + 50.0f;
-            int randomType = std::rand() % 2;
+            int randomType = std::rand() % 3;
             switch(randomType)
             {
                 case 0:
@@ -265,6 +290,15 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                                 m_Player->ApplyWeaponPowerUp();
 							}
                          });
+                    break;
+
+				case 2:
+					SpawnPowerUp("assets/clone.bmp", spawnX, spawnY, 4, 5, PowerUps::PowerUpType::Companion);
+                    m_PowerUps.back()->SetEffectCallback([this](PowerUps::PowerUpType type)
+                        {
+                           printf("Companion powerup collected!\n");
+						   SpawnCompanion(0.0f, 0.0f);
+                        });
                     break;
             }
             m_PowerUpSpawnTimer = 0.0f;
@@ -428,6 +462,32 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             if (effect) effect->UpdateActor(deltaTime);
         }
 
+        // Update companions
+        for (auto& companion : m_Companions)
+        {
+            if (m_Player)
+            {
+                for (int i = 0; i < static_cast<int>(m_Companions.size()); ++i)
+                {
+                    if (!m_Companions[i]) continue;
+
+                    float px = m_Player->GetX();
+                    float py = m_Player->GetY();
+
+                    if (i == 0)
+                    {
+                        m_Companions[i]->SetPosition(px, py + 75.0f);
+                    }
+                    else if (i == 1)
+                    {
+                        m_Companions[i]->SetPosition(px, py - 50.0f);
+                    }
+
+                    m_Companions[i]->UpdateActor(deltaTime);
+                }
+            }
+        }
+
 		//Remove dead enemies
         m_Enemies.erase(
             std::remove_if(m_Enemies.begin(), m_Enemies.end(),
@@ -468,13 +528,22 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             m_PowerUps.end()
 		);
 
-        // Remove effects mortos
+        // Remove effects 
         m_Effects.erase(
             std::remove_if(m_Effects.begin(), m_Effects.end(),
                 [](const std::unique_ptr<Mechanism::Actor>& effect) {
                     return effect->IsDead();
                 }),
             m_Effects.end()
+        );
+
+        // Remove companions 
+        m_Companions.erase(
+            std::remove_if(m_Companions.begin(), m_Companions.end(),
+                [](const std::unique_ptr<Mechanism::Actor>& companion) {
+                    return companion->IsDead();
+                }),
+            m_Companions.end()
         );
     }
 
@@ -540,6 +609,11 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
             if (effect) effect->Render(m_SpriteRenderer);
         }
 
+		// Render companions
+        for (const auto& companion : m_Companions)
+        {
+            if (companion) companion->Render(m_SpriteRenderer);
+		}
 
         if (m_HealthBar)
         {

@@ -36,7 +36,7 @@
         void SpawnEnemyProjectile(float x, float y, float targetX, float targetY);
 		void SpawnPowerUp(const char* texturePath, float x, float y, int cols, int rows, PowerUps::PowerUpType type);
 		void SpawnExplosion(float x, float y);
-
+		void SpawnCompanion(float x, float y);
 
         void AddBackground();
         void ClearAllActors();
@@ -60,17 +60,24 @@
 		float m_PowerUpSpawnInterval;
 
         std::vector<std::unique_ptr<Mechanism::Actor>> m_Actors;// All actors in the level
-        std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level   
-		std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
-        std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemie projectiles
+        std::vector<std::unique_ptr<Enemy>> m_Enemies;// All enemies in the level
+     
+        std::vector<std::unique_ptr<Projectile>> m_Projectiles;// All projectiles in the level 
+        std::vector<std::unique_ptr<EnemyProjectile>> m_EnemyProjectiles;// All enemy projectiles
+
 		std::vector<std::unique_ptr<PowerUps>> m_PowerUps;// All powerups in the level
+        std::vector<std::unique_ptr<Mechanism::Actor>> m_Companions;// All companions in the level
+
 		std::vector<std::unique_ptr<Mechanism::Actor>> m_Effects;// All effects in the level
+
+        int m_CompanionCount = 0;
 
         Mechanism::Window& m_Window;
         std::vector<Mechanism::Actor*> m_Letters;
         std::unique_ptr<Mechanism::HealthBar> m_HealthBar;
 
         void DisplayText(const std::string& text, float startX, float startY, float scale = 5.0f, float spacing = 5.0f);
-        
+      
+      
     };
 

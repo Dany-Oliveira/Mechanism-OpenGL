@@ -20,13 +20,11 @@ EnemyProjectile::EnemyProjectile(void* renderer, const char* texturePath, float 
 
 	velocityX = directionX * m_Speed;
 	velocityY = directionY * m_Speed;
-
-	std::cout << "Enemy Projectile created\n";
 }
 
 EnemyProjectile::~EnemyProjectile()
 {
-	std::cout << "Enemy Projectile destroyed\n";	
+	
 }
 
 void EnemyProjectile::UpdateEnemyProjectile(float deltaTime)
@@ -47,7 +45,6 @@ void EnemyProjectile::OnCollisionBegin(Mechanism::Actor* other)
 {
 	if (other && other->GetCollisionTag() == Mechanism::Actor::CollisionTag::Player)
 	{
-		printf("Enemy projectile collided with the player!\n");
 		SetIsDead(true);
 	}
 }

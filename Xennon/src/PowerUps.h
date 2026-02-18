@@ -10,7 +10,8 @@ public:
 	{
 		None = 0,
 		Weapon,
-		Shield
+		Shield,
+		Companion
 	};
 
 	PowerUps(void* renderer, const char* texturePath, float x, float y, int gridColumns, 
