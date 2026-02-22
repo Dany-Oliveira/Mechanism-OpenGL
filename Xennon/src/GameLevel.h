@@ -3,7 +3,6 @@
 #include "Mechanism/Level.h"
 #include "Mechanism/Actor.h"
 #include "Mechanism/Window.h"
-#include "Mechanism/Renderer.h"
 #include "Mechanism/SpriteRenderer.h"
 #include "Mechanism/HealthBar.h"
 #include "Spaceship.h"  
@@ -47,6 +46,10 @@
 
         void* m_NativeWindow;
         Mechanism::Actor* m_Background;
+		Mechanism::Actor* m_Background2;
+        float m_BgScrollSpeed = 50.0f;
+        float m_BackgroundWidth = 1600.0f;
+
         Spaceship* m_Player;
         Mechanism::SpriteRenderer* m_SpriteRenderer;
 

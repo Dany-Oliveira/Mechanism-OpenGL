@@ -44,7 +44,7 @@ private:
 	float m_ShootCooldownTime;
 	std::function<void(float, float, int)> m_ShootCallback;
 
-
+	int m_CurrentFrame = 3;
 
 };
 

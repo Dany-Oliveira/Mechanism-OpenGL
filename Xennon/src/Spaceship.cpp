@@ -7,7 +7,7 @@ Spaceship::Spaceship(void* renderer, const char* texturePath, float x, float y, 
 	m_ShootCooldown(0.0f), m_ShootCooldownTime(0.2f), m_MaxHealth(10), m_CurrentHealth(10), m_ProjectileDamage(5), m_WeaponPowerUpLevel(0)
 {
 	SetSpeed(5.0f); // Set a default speed for the spaceship
-
+	SetAnimationEnabled(false); // Disable animation by default
 	
 }
 
@@ -62,6 +62,39 @@ void Spaceship::PlayerUpdate(float deltaTime)
 		Stop();
 	}
 
+	// Animation frame based on horizontal input
+	const int neutralFrame = 3;
+	const int upFrame = 0;
+	const int downFrame = 6;
+
+	int targetFrame;
+	if (directionY < 0.0f)
+	{
+		targetFrame = upFrame;
+	}
+
+	else if (directionY > 0.0f)
+	{
+		targetFrame = downFrame;
+	}
+
+	else
+	{
+		targetFrame = neutralFrame;
+	}
+
+	int currentFrame = GetFrameIndex();
+	if (currentFrame < targetFrame) 
+	{
+		currentFrame++;
+	}	
+	else if (currentFrame > targetFrame)
+	{
+		currentFrame--;
+	}
+	
+	SetFrameIndex(currentFrame);
+
 	// Shooting
 	if(Mechanism::Input::IsKeyPressed(Mechanism::Input::KEY_SPACE) && m_ShootCooldown <= 0.0f)
 	{
@@ -104,7 +137,6 @@ void Spaceship::TakeDamage(int damage)
 		m_CurrentHealth = 0;
 	}
 
-	printf("Player took %d damage! Health: %d/%d\n", damage, m_CurrentHealth, m_MaxHealth);
 
 	if (m_CurrentHealth <= 0)
 	{

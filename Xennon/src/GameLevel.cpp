@@ -7,8 +7,8 @@
 GameLevel::GameLevel(Mechanism::Window& window) :
     Level(0.0f, 0.0f), m_Window(window), m_SpriteRenderer(&window.GetSpriteRenderer()), 
     m_NativeWindow(window.GetNativeWindow()), m_WindowWidth(window.GetWidth()), m_WindowHeight(window.GetHeight()),
-	m_Background(nullptr), m_Player(nullptr), 
-    m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(3.0f), 
+	m_Background(nullptr), m_Background2(nullptr), m_Player(nullptr), 
+    m_EnemySpawnTimer(0.0f), m_EnemySpawnInterval(5.0f), 
     m_PowerUpSpawnTimer(0.0f), m_PowerUpSpawnInterval(5.0f)
     {
         printf("\nGameLevel created!\n");
@@ -106,10 +106,20 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
         if(m_Background)
         {
             m_Background->ScaleActor(3.0f, 3.0f);
+			m_Background->SetPosition(0, 0);
         }  
 		m_Actors.push_back(std::move(background));
 
-        printf("Background added\n\n");        
+        // Second background layer
+        auto background2 = std::make_unique<Mechanism::Actor>(m_NativeWindow, "assets/galaxy2.bmp", 0, 0, 1, 1, 0);
+        m_Background2 = background2.get();
+        if (m_Background2)
+        {
+            m_Background2->ScaleActor(3.0f, 3.0f);
+            m_Background2->SetPosition(m_BackgroundWidth, 0);
+			m_Background2->SetRotation(180.0f); 
+        }
+        m_Actors.push_back(std::move(background2));
     }
 
 
@@ -156,7 +166,7 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
                 break;
 			case 2:
                 printf("Maximum companions reached, cannot spawn more!\n");
-				return; // Max 2 companions, do not spawn more			
+				return; 		
                 break;
         }
 		++m_CompanionCount;
@@ -254,6 +264,29 @@ void GameLevel::DisplayText(const std::string& text, float startX, float startY,
     void GameLevel::UpdateGameLevel(float deltaTime)
     {
 		Level::Update(deltaTime);
+
+        // Update background scrolling
+        if (m_Background && m_Background2)
+        {
+            float bg1X = m_Background->GetX();
+            float bg2X = m_Background2->GetX();
+
+            bg1X -= m_BgScrollSpeed * deltaTime;
+            bg2X -= m_BgScrollSpeed * deltaTime;
+
+            if (bg1X <= -m_BackgroundWidth)
+            {
+                bg1X = bg2X + m_BackgroundWidth;
+            }
+            if (bg2X <= -m_BackgroundWidth)
+            {
+                bg2X = bg1X + m_BackgroundWidth;
+            }
+
+            m_Background->SetPosition(bg1X, 0);
+            m_Background2->SetPosition(bg2X, 0);
+        }
+
 
         if(m_Player && m_HealthBar)
         {

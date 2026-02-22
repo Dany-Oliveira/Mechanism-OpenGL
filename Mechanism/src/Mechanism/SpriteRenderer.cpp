@@ -68,13 +68,13 @@ namespace Mechanism
 
 		glUniform1i(glGetUniformLocation(m_ShaderProgram, "useRectColor"), false);
 
-		// Create model matrix (position and scale)
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(x, y, 0.0f));
-		model = glm::translate(model, glm::vec3(width * 0.5f, height * 0.5f, 0.0f));   
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(-width * 0.5f, -height * 0.5f, 0.0f));  
-		model = glm::scale(model, glm::vec3(width, height, 1.0f));
+		// Create model matrix for sprite transformations
+		glm::mat4 model = glm::mat4(1.0f);// Identity matrix
+		model = glm::translate(model, glm::vec3(x, y, 0.0f));// Move to sprite position
+		model = glm::translate(model, glm::vec3(width * 0.5f, height * 0.5f, 0.0f)); // Move to center for rotation  
+		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));// Rotate around center
+		model = glm::translate(model, glm::vec3(-width * 0.5f, -height * 0.5f, 0.0f));  // Move back after rotation
+		model = glm::scale(model, glm::vec3(width, height, 1.0f)); // Scale to desired size
 
 		glUniformMatrix4fv(glGetUniformLocation(m_ShaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 

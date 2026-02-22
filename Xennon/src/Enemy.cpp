@@ -53,7 +53,6 @@ void Enemy::OnCollisionBegin(Mechanism::Actor* other)
 		{
 			// Flip direction on collision
 			SetDirectionY(-m_DirectionY);
-			printf("Loner bounced off another Loner!\n");
 		}
 	}
 }

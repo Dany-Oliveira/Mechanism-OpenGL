@@ -144,7 +144,6 @@
     <ClInclude Include="src\Mechanism\Actor.h" />
     <ClInclude Include="src\Mechanism\Level.h" />
     <ClInclude Include="src\Mechanism\Pawn.h" />
-    <ClInclude Include="src\Mechanism\Renderer.h" />
     <ClInclude Include="src\Mechanism.h" />
     <ClInclude Include="src\Mechanism\Application.h" />
     <ClInclude Include="src\Mechanism\Core.h" />
@@ -162,7 +161,6 @@
     <ClCompile Include="src\Mechanism\Actor.cpp" />
     <ClCompile Include="src\Mechanism\Level.cpp" />
     <ClCompile Include="src\Mechanism\Pawn.cpp" />
-    <ClCompile Include="src\Mechanism\Renderer.cpp" />
     <ClCompile Include="src\Mechanism\Application.cpp" />
     <ClCompile Include="src\Mechanism\Texture.cpp" />
     <ClCompile Include="src\Mechanism\Window.cpp" />
